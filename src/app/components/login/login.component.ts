@@ -12,8 +12,6 @@ export class LoginComponent {
   constructor(private spotifyAuthService: SpotifyAuthService) {}
 
   login() {
-    this.spotifyAuthService.redirectToAuthCodeFlow(
-      this.spotifyAuthService.clientId
-    );
+    this.spotifyAuthService.redirectToAuthCodeFlow();
   }
 }
