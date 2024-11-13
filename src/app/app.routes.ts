@@ -1,8 +1,13 @@
 import { Routes } from '@angular/router';
-import { AppComponent } from './app.component';
-import { HomePageComponent } from './home-page/home-page.component';
-import { Component } from '@angular/core';
+import { CallbackComponent } from './components/callback/callback.component';
+import { HomeComponent } from './components/home/home.component';
+import { LoginComponent } from './components/login/login.component';
+import { UserComponent } from './components/user/user.component';
 
 export const routes: Routes = [
-  { path: '', component: HomePageComponent, title: 'Home Page' },
+  { path: '', component: HomeComponent }, // Home route
+  { path: 'login', component: LoginComponent }, // Login route
+  { path: 'callback', component: CallbackComponent }, // Callback route
+  { path: 'user', component: UserComponent }, // User profile route
+  { path: '**', redirectTo: '' }, // Redirect unknown paths to home
 ];
