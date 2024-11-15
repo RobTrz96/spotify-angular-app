@@ -12,22 +12,22 @@ import { SpotifyAuthService } from '../../services/spotify.auth.service';
 })
 export class CallbackComponent implements OnInit {
   constructor(
-    private route: ActivatedRoute,
-    private spotifyAuthService: SpotifyAuthService,
-    private router: Router
+    private _route: ActivatedRoute,
+    private _spotifyAuthService: SpotifyAuthService,
+    private _router: Router
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(async (params) => {
+    this._route.queryParams.subscribe(async (params) => {
       const code = params['code'];
       if (code) {
-        this.spotifyAuthService.getAccessToken(code).subscribe(
+        this._spotifyAuthService.getAccessToken(code).subscribe(
           (token) => {
-            this.spotifyAuthService.saveToken(token);
+            this._spotifyAuthService.saveToken(token);
             const url = new URL(window.location.href);
             url.searchParams.delete('code');
             window.history.replaceState({}, document.title, url.toString());
-            this.router.navigate(['/user']);
+            this._router.navigate(['/user']);
           },
           (error) => {
             console.error('Error obtaining access token!', error);
@@ -35,40 +35,8 @@ export class CallbackComponent implements OnInit {
         );
       } else {
         console.error('Authorization code not found!');
-        this.router.navigate(['/login']);
+        this._router.navigate(['/login']);
       }
     });
   }
 }
-// export class CallbackComponent implements OnInit {
-//   constructor(
-//     private route: ActivatedRoute,
-//     private spotifyAuthService: SpotifyAuthService,
-//     private router: Router
-//   ) {}
-
-//   async ngOnInit() {
-//     const code = this.route.snapshot.queryParamMap.get('code');
-//     if (code) {
-//       try {
-//         const token = await this.spotifyAuthService.getAccessToken(
-//           this.spotifyAuthService.clientId,
-//           code
-//         );
-//         this.spotifyAuthService.saveToken(token);
-
-//         const url = new URL(window.location.href);
-//         url.searchParams.delete('code');
-//         window.history.replaceState({}, document.title, url.toString());
-
-//         this.router.navigate(['/user']);
-//       } catch (error) {
-//         console.error('Error exchanging code for token:', error);
-//         this.router.navigate(['/login']);
-//       }
-//     } else {
-//       console.error('Authorization code not found in the URL');
-//       this.router.navigate(['/login']);
-//     }
-//   }
-// }

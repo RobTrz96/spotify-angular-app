@@ -9,9 +9,9 @@ import { SpotifyAuthService } from '../../services/spotify.auth.service';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  constructor(private spotifyAuthService: SpotifyAuthService) {}
+  constructor(private _spotifyAuthService: SpotifyAuthService) {}
 
-  login() {
-    this.spotifyAuthService.redirectToAuthCodeFlow();
+  login(): void {
+    this._spotifyAuthService.redirectToAuthCodeFlow();
   }
 }
