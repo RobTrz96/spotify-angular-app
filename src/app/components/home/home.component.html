@@ -1,2 +1,47 @@
-<app-login></app-login>
-<app-user></app-user>
+<div class="home-page">
+  <header>
+    <h1>Welcome to Spotify App!</h1>
+    <button (click)="this._router.navigate(['/user'])">Go to user page</button>
+    <app-login></app-login>
+  </header>
+
+  <section>
+    <h2>Featured Playlists</h2>
+    <div class="playlist-container">
+      <div
+        *ngFor="let playlist of featuredPlaylists"
+        class="playlist-card"
+        (click)="onPlaylistClick(playlist)"
+      >
+        <img [src]="playlist.images[0]?.url" alt="{{ playlist.name }}" />
+        <p>{{ playlist.name }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Recently Played</h2>
+    <div class="recently-played-container">
+      <div
+        *ngFor="let track of recentlyPlayed"
+        class="track-card"
+        (click)="onTrackClick(track)"
+      >
+        <img [src]="track.album.images[0]?.url" alt="{{ track.name }}" />
+        <p>{{ track.name }}</p>
+        <small>{{ track.artists[0]?.name }}</small>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Your Top Artists</h2>
+    <div class="artist-container">
+      <div *ngFor="let artist of topArtists" class="artist-card">
+        <img [src]="artist.images[0]?.url" alt="{{ artist.name }}" />
+        <p>{{ artist.name }}</p>
+      </div>
+    </div>
+  </section>
+  <app-player></app-player>
+</div>

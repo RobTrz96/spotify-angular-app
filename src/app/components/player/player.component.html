@@ -1,0 +1,31 @@
+<div class="music-player">
+  <div class="track-info">
+    <img
+      *ngIf="currentTrack"
+      [src]="currentTrack.album.images[0]?.url"
+      alt="Album Art"
+    />
+    <div>
+      <h3>{{ currentTrack?.name || "No Track Playing" }}</h3>
+      <p>{{ currentTrack?.artists[0]?.name }}</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button (click)="previousTrack()">⏮</button>
+    <button (click)="togglePlayPause()">
+      {{ isPlaying ? "⏸ Pause" : "▶️ Play" }}
+    </button>
+    <button (click)="nextTrack()">⏭</button>
+  </div>
+
+  <div class="volume">
+    <input
+      type="range"
+      min="0"
+      max="100"
+      [value]="volume"
+      (input)="adjustVolume($event)"
+    />
+  </div>
+</div>

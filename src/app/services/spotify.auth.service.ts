@@ -1,9 +1,4 @@
-import {
-  HttpClient,
-  HttpHeaderResponse,
-  HttpHeaders,
-  HttpParams,
-} from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 @Injectable({
@@ -24,7 +19,10 @@ export class SpotifyAuthService {
       .set('client_id', this.clientId)
       .set('response_type', 'code')
       .set('redirect_uri', 'http://localhost:4200/callback')
-      .set('scope', 'user-read-private user-read-email')
+      .set(
+        'scope',
+        'user-read-private user-read-email playlist-read-private user-modify-playback-state user-read-playback-state user-read-recently-played user-top-read user-read-currently-playing'
+      )
       .set('code_challenge_method', 'S256')
       .set('code_challenge', challenge);
 

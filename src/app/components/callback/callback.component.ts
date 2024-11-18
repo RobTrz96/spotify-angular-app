@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { SpotifyAuthService } from '../../services/spotify.auth.service';
@@ -18,6 +18,10 @@ export class CallbackComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.callback();
+  }
+
+  callback(): void {
     this._route.queryParams.subscribe(async (params) => {
       const code = params['code'];
       if (code) {

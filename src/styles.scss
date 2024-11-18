@@ -1,4 +1,41 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  font-family: Roboto, Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 400;
+  color: #1db954; /* Spotify Green */
+}
+
+a {
+  text-decoration: none;
+  color: #1db954;
+}
+
+a:hover {
+  color: #14833b;
+}
+
+button {
+  cursor: pointer;
+}
+
+.mat-raised-button {
+  background-color: #1db954 !important;
+  color: #fff !important;
+}
+
+.mat-raised-button:hover {
+  background-color: #14833b !important;
+}
+
+.mat-toolbar {
+  background-color: #1db954 !important;
+  color: white !important;
+}
