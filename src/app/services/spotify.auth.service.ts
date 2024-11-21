@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
@@ -7,7 +8,7 @@ import { map, Observable } from 'rxjs';
 export class SpotifyAuthService {
   clientId = '1c509bc759774b93b158762ca34d48dc';
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient, private _router: Router) {}
 
   async redirectToAuthCodeFlow(): Promise<void> {
     const verifier = this.generateCodeVerifier(128);

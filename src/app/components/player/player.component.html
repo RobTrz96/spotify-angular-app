@@ -2,12 +2,12 @@
   <div class="track-info">
     <img
       *ngIf="currentTrack"
-      [src]="currentTrack.album.images[0]?.url"
+      [src]="currentTrack.album.images[0].url"
       alt="Album Art"
     />
     <div>
-      <h3>{{ currentTrack?.name || "No Track Playing" }}</h3>
-      <p>{{ currentTrack?.artists[0]?.name }}</p>
+      <h3>{{ currentTrack?.name || "No track playing" }}</h3>
+      <p>{{ currentTrack?.artists?.[0]?.name || "No track playing" }}</p>
     </div>
   </div>
 

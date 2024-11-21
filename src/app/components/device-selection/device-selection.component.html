@@ -6,7 +6,8 @@
       [class.active]="device.is_active"
       (click)="selectDevice(device.id)"
     >
-      {{ device.name }} ({{ device.type }})
+      <strong>{{ device.name }}</strong> ({{ device.type }}) Volume:
+      {{ device.volume_percent }}
       <span *ngIf="device.is_active"> - Active</span>
     </li>
   </ul>

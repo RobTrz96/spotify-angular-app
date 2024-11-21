@@ -1,6 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { UserProfile } from '../interfaces/current.user.profile.interface';
+import { CurrentUserPlaylistsResponse } from '../interfaces/current.user.playlists.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -10,17 +12,20 @@ export class SpotifyUserService {
 
   constructor(private _http: HttpClient) {}
 
-  getHeaders(token: string): HttpHeaders {
+  getUserProfile(token: string): Observable<UserProfile> {
+    const headers = this.getHeaders(token);
+    return this._http.get<UserProfile>(`${this._baseUri}`, { headers });
+  }
+
+  getUserPlaylists(token: string): Observable<CurrentUserPlaylistsResponse> {
+    const headers = this.getHeaders(token);
+    return this._http.get<CurrentUserPlaylistsResponse>(
+      `${this._baseUri}/playlists`,
+      { headers }
+    );
+  }
+
+  private getHeaders(token: string): HttpHeaders {
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
-  }
-
-  getUserData(token: string): Observable<any> {
-    const headers = this.getHeaders(token);
-    return this._http.get<any>(`${this._baseUri}`, { headers });
-  }
-
-  getUserPlaylists(token: string): Observable<any> {
-    const headers = this.getHeaders(token);
-    return this._http.get<any>(`${this._baseUri}/playlists`, { headers });
   }
 }

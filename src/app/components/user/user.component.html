@@ -1,15 +1,15 @@
 <div class="container">
-  <mat-card *ngIf="userData" class="profile-card">
+  <mat-card *ngIf="userProfile" class="profile-card">
     <button (click)="this.router.navigate(['/home'])">Home page</button>
-    <h2>Welcome, {{ userData.display_name }}</h2>
+    <h2>Welcome, {{ userProfile.display_name }}</h2>
     <img
-      [src]="userData.images[0]?.url"
+      [src]="userProfile.images[0].url"
       alt="User Avatar"
-      *ngIf="userData.images.length"
+      *ngIf="userProfile.images.length"
     />
-    <p>Email: {{ userData.email }}</p>
-    <p>Country: {{ userData.country }}</p>
-    <p>Nr of followers: {{ userData.followers.total }}</p>
+    <p>Email: {{ userProfile.email }}</p>
+    <p>Country: {{ userProfile.country }}</p>
+    <p>Nr of followers: {{ userProfile.followers.total }}</p>
 
     <div *ngIf="playlists.length > 0">
       <h3>Your Playlists:</h3>
@@ -17,7 +17,7 @@
         <li *ngFor="let playlist of playlists">
           <div>
             <img
-              [src]="playlist.images[0]?.url"
+              [src]="playlist.images[0].url"
               alt="Playlist Cover"
               width="50"
             />
@@ -29,7 +29,7 @@
       </ul>
     </div>
 
-    <div *ngIf="!userData">
+    <div *ngIf="!userProfile">
       <p>Loading user data...</p>
     </div>
   </mat-card>

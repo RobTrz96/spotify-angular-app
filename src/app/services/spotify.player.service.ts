@@ -1,6 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import {
+  SelectDevice,
+  SelectDeviceResponse,
+} from '../interfaces/device.selection.interface';
+import { CurrentlyPlayingResponse } from '../interfaces/current.track.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -9,72 +14,62 @@ export class SpotifyPlayerService {
   private _baseUrl = 'https://api.spotify.com/v1/me';
   constructor(private _http: HttpClient) {}
 
-  getHeaders(token: string): HttpHeaders {
-    return new HttpHeaders({ Authorization: `Bearer ${token}` });
-  }
-
-  play(token: string): Observable<any> {
+  nextTrack(token: string): Observable<void> {
     const headers = this.getHeaders(token);
-    return this._http.put(
-      `${this._baseUrl}/player/play`,
-      {},
-      { headers, responseType: 'text' }
-    );
-  }
-
-  pause(token: string): Observable<any> {
-    const headers = this.getHeaders(token);
-    return this._http.put(
-      `${this._baseUrl}/player/pause`,
-      {},
-      { headers, responseType: 'text' }
-    );
-  }
-
-  nextTrack(token: string): Observable<any> {
-    const headers = this.getHeaders(token);
-    return this._http.post(
+    return this._http.post<void>(
       `${this._baseUrl}/player/next`,
       {},
-      { headers, responseType: 'text' }
+      { headers, responseType: 'text' as 'json' }
     );
   }
 
-  previousTrack(token: string): Observable<any> {
+  previousTrack(token: string): Observable<void> {
     const headers = this.getHeaders(token);
-    return this._http.post(
+    return this._http.post<void>(
       `${this._baseUrl}/player/previous`,
       {},
-      { headers, responseType: 'text' }
+      { headers, responseType: 'text' as 'json' }
     );
   }
 
-  getCurrentTrack(token: string): Observable<any> {
+  play(token: string): Observable<void> {
     const headers = this.getHeaders(token);
-    return this._http.get(
-      `${this._baseUrl}/player/currently-playing`,
-
-      { headers }
+    return this._http.put<void>(
+      `${this._baseUrl}/player/play`,
+      {},
+      { headers, responseType: 'text' as 'json' }
     );
   }
 
-  setVolume(token: string, volume: number): Observable<any> {
+  pause(token: string): Observable<void> {
     const headers = this.getHeaders(token);
-    return this._http.put(
+    return this._http.put<void>(
+      `${this._baseUrl}/player/pause`,
+      {},
+      { headers, responseType: 'text' as 'json' }
+    );
+  }
+
+  setVolume(token: string, volume: number): Observable<void> {
+    const headers = this.getHeaders(token);
+    return this._http.put<void>(
       `${this._baseUrl}/player/volume?volume_percent=${volume}`,
       {},
       { headers }
     );
   }
 
-  getCurrentPlaybackState(token: string): Observable<any> {
+  getCurrentTrack(token: string): Observable<CurrentlyPlayingResponse> {
     const headers = this.getHeaders(token);
-    return this._http.get('https://api.spotify.com/v1/me/player', { headers });
+    return this._http.get<CurrentlyPlayingResponse>(
+      `${this._baseUrl}/player/currently-playing`,
+      { headers }
+    );
   }
 
-  playTrack(token: string, uri: string): Observable<any> {
+  playTrack(token: string, uri: string): Observable<void> {
     const headers = this.getHeaders(token);
-    return this._http.put(
+    return this._http.put<void>(
       `${this._baseUrl}/player/play`,
       { uris: [uri] },
       { headers }
@@ -85,24 +80,27 @@ export class SpotifyPlayerService {
     token: string,
     playlistUri: string,
     deviceId?: string
-  ): Observable<any> {
+  ): Observable<void> {
     const headers = this.getHeaders(token);
-    const body: any = { context_uri: playlistUri };
+    const body: { context_uri: string; device_id?: string } = {
+      context_uri: playlistUri,
+    };
 
     if (deviceId) {
       body.device_id = deviceId;
     }
 
-    return this._http.put<any>(`${this._baseUrl}/player/play`, body, {
+    return this._http.put<void>(`${this._baseUrl}/player/play`, body, {
       headers,
     });
   }
 
-  getAvailableDevices(token: string): Observable<any> {
+  getAvailableDevices(token: string): Observable<SelectDeviceResponse> {
     const headers = this.getHeaders(token);
-    return this._http.get('https://api.spotify.com/v1/me/player/devices', {
-      headers,
-    });
+    return this._http.get<SelectDeviceResponse>(
+      'https://api.spotify.com/v1/me/player/devices',
+      { headers }
+    );
   }
 
   transferPlayback(token: string, deviceId: string) {
@@ -111,5 +109,9 @@ export class SpotifyPlayerService {
     return this._http.put('https://api.spotify.com/v1/me/player', body, {
       headers,
     });
+  }
+
+  private getHeaders(token: string): HttpHeaders {
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 }
