@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RecentlyPlayedTracksResponse } from '../interfaces/recently.played.tracks.interface';
@@ -13,34 +13,21 @@ export class SpotifyApiService {
 
   constructor(private _http: HttpClient) {}
 
-  getFeaturedPlaylists(token: string): Observable<FeaturedPlaylistsRepsonse> {
+  getFeaturedPlaylists(): Observable<FeaturedPlaylistsRepsonse> {
     return this._http.get<FeaturedPlaylistsRepsonse>(
-      `${this._baseUri}/browse/featured-playlists`,
-      {
-        headers: this.getHeaders(token),
-      }
+      `${this._baseUri}/browse/featured-playlists`
     );
   }
 
-  getRecentlyPlayed(token: string): Observable<RecentlyPlayedTracksResponse> {
+  getRecentlyPlayed(): Observable<RecentlyPlayedTracksResponse> {
     return this._http.get<RecentlyPlayedTracksResponse>(
-      `${this._baseUri}/me/player/recently-played`,
-      {
-        headers: this.getHeaders(token),
-      }
+      `${this._baseUri}/me/player/recently-played`
     );
   }
 
-  getTopArtists(token: string): Observable<UserTopArtistsResponse> {
+  getTopArtists(): Observable<UserTopArtistsResponse> {
     return this._http.get<UserTopArtistsResponse>(
-      `${this._baseUri}/me/top/artists`,
-      {
-        headers: this.getHeaders(token),
-      }
+      `${this._baseUri}/me/top/artists`
     );
-  }
-
-  private getHeaders(token: string): HttpHeaders {
-    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 }

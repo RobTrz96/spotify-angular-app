@@ -41,7 +41,7 @@ export class CallbackComponent implements OnInit {
               const url = new URL(window.location.href);
               url.searchParams.delete('code');
               window.history.replaceState({}, document.title, url.toString());
-              this._router.navigate(['/user']);
+              this._router.navigate(['/']);
             }
           });
       } else {

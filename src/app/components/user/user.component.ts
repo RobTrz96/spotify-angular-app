@@ -22,7 +22,6 @@ import {
 export class UserComponent implements OnInit {
   userProfile: UserProfile | null = null;
   playlists: CurrentUserPlaylists[] = [];
-  private _token: string | null = localStorage.getItem('access_token');
 
   constructor(
     public router: Router,
@@ -37,7 +36,7 @@ export class UserComponent implements OnInit {
 
   playPlaylist(playlistUri: string): void {
     this._spotifyPlayerService
-      .playPlaylist(this._token!, playlistUri)
+      .playPlaylist(playlistUri)
       .pipe(
         catchError((error) => {
           console.error('Error starting playlist playback:', error);
@@ -50,42 +49,34 @@ export class UserComponent implements OnInit {
   }
 
   private getData(): void {
-    if (this._token) {
-      this._spotifyUserService
-        .getUserProfile(this._token)
-        .pipe(
-          catchError((error) => {
-            console.error('Error obtaining user data!', error);
-            return of(null);
-          })
-        )
-        .subscribe((profile: UserProfile | null) => {
-          if (profile) {
-            this.userProfile = profile;
-          } else {
-            console.error('No user profile data received.');
-          }
-        });
-    } else {
-      console.error('Authorization token not found!');
-    }
+    this._spotifyUserService
+      .getUserProfile()
+      .pipe(
+        catchError((error) => {
+          console.error('Error obtaining user data!', error);
+          return of(null);
+        })
+      )
+      .subscribe((profile: UserProfile | null) => {
+        if (profile) {
+          this.userProfile = profile;
+        } else {
+          console.error('No user profile data received.');
+        }
+      });
   }
 
   private getPlaylists(): void {
-    if (this._token) {
-      this._spotifyUserService
-        .getUserPlaylists(this._token)
-        .pipe(
-          catchError((error) => {
-            console.error('Error fetching user playlists:', error);
-            return of({ items: [] });
-          })
-        )
-        .subscribe((response: CurrentUserPlaylistsResponse) => {
-          this.playlists = response.items;
-        });
-    } else {
-      console.error('Authorization token not found!');
-    }
+    this._spotifyUserService
+      .getUserPlaylists()
+      .pipe(
+        catchError((error) => {
+          console.error('Error fetching user playlists:', error);
+          return of({ items: [] });
+        })
+      )
+      .subscribe((response: CurrentUserPlaylistsResponse) => {
+        this.playlists = response.items;
+      });
   }
 }

@@ -17,7 +17,6 @@ import {
 export class DeviceSelectionComponent implements OnInit {
   devices: SelectDevice[] = [];
   private _refreshInterval: Subscription | undefined;
-  private _token: string = localStorage.getItem('access_token') || '';
 
   constructor(private _spotifyPlayerService: SpotifyPlayerService) {}
 
@@ -27,39 +26,31 @@ export class DeviceSelectionComponent implements OnInit {
   }
 
   selectDevice(deviceId: string): void {
-    if (this._token) {
-      this._spotifyPlayerService
-        .transferPlayback(this._token, deviceId)
-        .pipe(
-          catchError((error) => {
-            console.error('Error transferring playback to device!', error);
-            return of(null);
-          })
-        )
-        .subscribe(() => {
-          console.log(`Playback transferred to device: ${deviceId}`);
-        });
-    } else {
-      console.log('Authorization token not found!');
-    }
+    this._spotifyPlayerService
+      .transferPlayback(deviceId)
+      .pipe(
+        catchError((error) => {
+          console.error('Error transferring playback to device!', error);
+          return of(null);
+        })
+      )
+      .subscribe(() => {
+        console.log(`Playback transferred to device: ${deviceId}`);
+      });
   }
 
   private loadDevices(): void {
-    if (this._token) {
-      this._spotifyPlayerService
-        .getAvailableDevices(this._token)
-        .pipe(
-          catchError((error) => {
-            console.error('Error obtaining device list!', error);
-            return of({ devices: [] });
-          })
-        )
-        .subscribe((data: SelectDeviceResponse) => {
-          this.devices = data.devices;
-        });
-    } else {
-      console.log('Authorization token not found!');
-    }
+    this._spotifyPlayerService
+      .getAvailableDevices()
+      .pipe(
+        catchError((error) => {
+          console.error('Error obtaining device list!', error);
+          return of({ devices: [] });
+        })
+      )
+      .subscribe((data: SelectDeviceResponse) => {
+        this.devices = data.devices;
+      });
   }
 
   private startAutoRefresh(): void {

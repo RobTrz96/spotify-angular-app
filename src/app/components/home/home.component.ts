@@ -38,7 +38,6 @@ export class HomeComponent implements OnInit {
   recentlyPlayed: RecentlyPlayedTracks[] = [];
   topArtists: UserTopArtists[] = [];
   private _message: string = '';
-  private _token: string = localStorage.getItem('access_token') || '';
 
   constructor(
     public router: Router,
@@ -54,7 +53,7 @@ export class HomeComponent implements OnInit {
 
   onTrackClick(track: Track): void {
     this._spotifyPlayerService
-      .playTrack(this._token, track.uri)
+      .playTrack(track.uri)
       .pipe(
         catchError((error) => {
           console.error(`Error playing track: ${track.name}`, error);
@@ -68,7 +67,7 @@ export class HomeComponent implements OnInit {
 
   onPlaylistClick(playlist: FeaturedPlaylistItem): void {
     this._spotifyPlayerService
-      .playPlaylist(this._token, playlist.uri)
+      .playPlaylist(playlist.uri)
       .pipe(
         catchError((error) => {
           console.error(`Error playing playlist: ${playlist.name}`, error);
@@ -81,14 +80,36 @@ export class HomeComponent implements OnInit {
   }
 
   private getUserTopArtists(): void {
-    if (this._token) {
-      this._spotifyApiService
-        .getTopArtists(this._token)
-        .pipe(
-          catchError((error) => {
-            console.error('Error obtaining users top artists!', error);
-            this.router.navigate(['/login']);
-            return of({
+    this._spotifyApiService
+      .getTopArtists()
+      .pipe(
+        catchError((error) => {
+          console.error('Error obtaining users top artists!', error);
+          return of({
+            href: '',
+            limit: 0,
+            next: '',
+            offset: 0,
+            previous: '',
+            total: 0,
+            items: [],
+          } as UserTopArtistsResponse);
+        })
+      )
+      .subscribe((response: UserTopArtistsResponse) => {
+        this.topArtists = response.items;
+      });
+  }
+
+  private getTopPlaylists(): void {
+    this._spotifyApiService
+      .getFeaturedPlaylists()
+      .pipe(
+        catchError((error) => {
+          console.error('Error obtaining featured playlists!', error);
+          return of({
+            message: '',
+            playlists: {
               href: '',
               limit: 0,
               next: '',
@@ -96,73 +117,34 @@ export class HomeComponent implements OnInit {
               previous: '',
               total: 0,
               items: [],
-            } as UserTopArtistsResponse);
-          })
-        )
-        .subscribe((response: UserTopArtistsResponse) => {
-          this.topArtists = response.items;
-        });
-    } else {
-      console.error('Authorization token not found!');
-    }
-  }
-
-  private getTopPlaylists(): void {
-    if (this._token) {
-      this._spotifyApiService
-        .getFeaturedPlaylists(this._token)
-        .pipe(
-          catchError((error) => {
-            console.error('Error obtaining featured playlists!', error);
-            return of({
-              message: '',
-              playlists: {
-                href: '',
-                limit: 0,
-                next: '',
-                offset: 0,
-                previous: '',
-                total: 0,
-                items: [],
-              },
-            } as FeaturedPlaylistsRepsonse);
-          })
-        )
-        .subscribe((response: FeaturedPlaylistsRepsonse) => {
-          this._message = response.message;
-          this.playlists = response.playlists.items;
-        });
-    } else {
-      console.error('Authorization token not found!');
-    }
+            },
+          } as FeaturedPlaylistsRepsonse);
+        })
+      )
+      .subscribe((response: FeaturedPlaylistsRepsonse) => {
+        this._message = response.message;
+        this.playlists = response.playlists.items;
+      });
   }
 
   private getUserRecentTracks(): void {
-    if (this._token) {
-      this._spotifyApiService
-        .getRecentlyPlayed(this._token)
-        .pipe(
-          catchError((error) => {
-            console.error(
-              'Error obtaining users recently played tracks!',
-              error
-            );
-            this.router.navigate(['/login']);
-            return of({
-              href: '',
-              limit: 0,
-              next: '',
-              cursors: { before: '', after: '' },
-              total: 0,
-              items: [],
-            } as RecentlyPlayedTracksResponse);
-          })
-        )
-        .subscribe((response: RecentlyPlayedTracksResponse) => {
-          this.recentlyPlayed = response.items;
-        });
-    } else {
-      console.error('Authorization token not found!');
-    }
+    this._spotifyApiService
+      .getRecentlyPlayed()
+      .pipe(
+        catchError((error) => {
+          console.error('Error obtaining users recently played tracks!', error);
+          return of({
+            href: '',
+            limit: 0,
+            next: '',
+            cursors: { before: '', after: '' },
+            total: 0,
+            items: [],
+          } as RecentlyPlayedTracksResponse);
+        })
+      )
+      .subscribe((response: RecentlyPlayedTracksResponse) => {
+        this.recentlyPlayed = response.items;
+      });
   }
 }

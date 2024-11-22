@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
@@ -79,11 +79,24 @@ export class SpotifyAuthService {
     localStorage.setItem('access_token', token);
   }
 
-  get accessToken(): string | null {
+  clearToken(): void {
+    localStorage.removeItem('access_token');
+  }
+  getToken(): string | null {
     return localStorage.getItem('access_token');
   }
 
-  clearToken(): void {
+  logout(): void {
     localStorage.removeItem('access_token');
+    this._router.navigate(['/login']);
+  }
+  validateTokenWithServer(): Observable<boolean> {
+    return this._http.get('https://api.spotify.com/v1/me').pipe(
+      map(() => true), // If the request succeeds, return true
+      catchError((error) => {
+        console.warn('Token validation failed:', error);
+        return of(false); // Return false in case of an error
+      })
+    );
   }
 }

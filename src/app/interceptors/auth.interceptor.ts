@@ -1,27 +1,43 @@
 import {
   HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
+  HttpHandlerFn,
+  HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { inject } from '@angular/core';
+import { catchError, Observable, throwError } from 'rxjs';
+import { SpotifyAuthService } from '../services/spotify.auth.service';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      const cloned = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return next.handle(cloned);
+export const spotifyAuthInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> => {
+  const spotifyAuthService = inject(SpotifyAuthService);
+
+  const token = spotifyAuthService.getToken();
+  if (token) {
+    if (!spotifyAuthService.validateTokenWithServer()) {
+      console.warn('Token is invalid or expired. Redirecting to login...');
+      spotifyAuthService.logout();
+      return throwError(() => new Error('Token is invalid or expired.'));
     }
-    return next.handle(req);
+    const clonedRequest = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return next(clonedRequest).pipe(
+      catchError((error) => {
+        if (error.status === 401) {
+          console.warn('Token unauthorized. Redirecting to login...');
+          spotifyAuthService.logout();
+        }
+        return throwError(() => error);
+      })
+    );
   }
-}
+  console.warn('No token found. Redirecting to login...');
+  spotifyAuthService.logout();
+  return next(req);
+};

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { SpotifyPlayerService } from '../../services/spotify.player.service';
 import { CommonModule } from '@angular/common';
 import { catchError, interval, of, Subscription } from 'rxjs';
@@ -19,7 +18,6 @@ export class PlayerComponent implements OnInit {
   currentTrack: Track | null = null;
   isPlaying: boolean = false;
   volume: number = 50;
-  private _token: string = localStorage.getItem('access_token') || '';
   private _playbackSubscription: Subscription | undefined;
 
   constructor(private _spotifyPlayerService: SpotifyPlayerService) {}
@@ -32,7 +30,7 @@ export class PlayerComponent implements OnInit {
   togglePlayPause(): void {
     if (this.isPlaying) {
       this._spotifyPlayerService
-        .pause(this._token)
+        .pause()
         .pipe(
           catchError((error) => {
             console.error('Error pausing playback:', error);
@@ -42,7 +40,7 @@ export class PlayerComponent implements OnInit {
         .subscribe(() => (this.isPlaying = false));
     } else {
       this._spotifyPlayerService
-        .play(this._token)
+        .play()
         .pipe(
           catchError((error) => {
             console.error('Error resuming playback:', error);
@@ -55,7 +53,7 @@ export class PlayerComponent implements OnInit {
 
   nextTrack(): void {
     this._spotifyPlayerService
-      .nextTrack(this._token)
+      .nextTrack()
       .pipe(
         catchError((error) => {
           console.error('Error skipping to next track:', error);
@@ -69,7 +67,7 @@ export class PlayerComponent implements OnInit {
 
   previousTrack(): void {
     this._spotifyPlayerService
-      .previousTrack(this._token)
+      .previousTrack()
       .pipe(
         catchError((error) => {
           console.error('Error skipping to previous track:', error);
@@ -86,7 +84,7 @@ export class PlayerComponent implements OnInit {
     const volume = Number(target.value);
     this.volume = volume;
     this._spotifyPlayerService
-      .setVolume(this._token, volume)
+      .setVolume(volume)
       .pipe(
         catchError((error) => {
           console.error('Error adjusting volume:', error);
@@ -97,26 +95,22 @@ export class PlayerComponent implements OnInit {
   }
 
   playPlaylist(playlistUri: string): void {
-    if (this._token) {
-      this._spotifyPlayerService
-        .playPlaylist(this._token, playlistUri)
-        .pipe(
-          catchError((error) => {
-            console.error('Failed to start playback:', error);
-            return of(null);
-          })
-        )
-        .subscribe(() => {
-          console.log(`Playing playlist: ${playlistUri}`);
-        });
-    } else {
-      console.error('Authorization token not found!');
-    }
+    this._spotifyPlayerService
+      .playPlaylist(playlistUri)
+      .pipe(
+        catchError((error) => {
+          console.error('Failed to start playback:', error);
+          return of(null);
+        })
+      )
+      .subscribe(() => {
+        console.log(`Playing playlist: ${playlistUri}`);
+      });
   }
 
   private updatePlaybackState(): void {
     this._spotifyPlayerService
-      .getCurrentTrack(this._token)
+      .getCurrentTrack()
       .pipe(
         catchError((err) => {
           console.error('Error fetching playback state:', err);
@@ -129,25 +123,21 @@ export class PlayerComponent implements OnInit {
   }
 
   private loadCurrentTrack(): void {
-    if (this._token) {
-      this._spotifyPlayerService
-        .getCurrentTrack(this._token)
-        .pipe(
-          catchError((error) => {
-            console.error('Error fetching the current track!', error);
-            return of({
-              item: null,
-              is_playing: false,
-            } as CurrentlyPlayingResponse);
-          })
-        )
-        .subscribe((response: CurrentlyPlayingResponse) => {
-          this.currentTrack = response.item;
-          this.isPlaying = response.is_playing;
-        });
-    } else {
-      console.error('Authorization token not found!');
-    }
+    this._spotifyPlayerService
+      .getCurrentTrack()
+      .pipe(
+        catchError((error) => {
+          console.error('Error fetching the current track!', error);
+          return of({
+            item: null,
+            is_playing: false,
+          } as CurrentlyPlayingResponse);
+        })
+      )
+      .subscribe((response: CurrentlyPlayingResponse) => {
+        this.currentTrack = response.item;
+        this.isPlaying = response.is_playing;
+      });
   }
 
   private startPollingPlaybackState(): void {

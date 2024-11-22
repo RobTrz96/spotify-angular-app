@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserProfile } from '../interfaces/current.user.profile.interface';
@@ -12,20 +12,13 @@ export class SpotifyUserService {
 
   constructor(private _http: HttpClient) {}
 
-  getUserProfile(token: string): Observable<UserProfile> {
-    const headers = this.getHeaders(token);
-    return this._http.get<UserProfile>(`${this._baseUri}`, { headers });
+  getUserProfile(): Observable<UserProfile> {
+    return this._http.get<UserProfile>(`${this._baseUri}`);
   }
 
-  getUserPlaylists(token: string): Observable<CurrentUserPlaylistsResponse> {
-    const headers = this.getHeaders(token);
+  getUserPlaylists(): Observable<CurrentUserPlaylistsResponse> {
     return this._http.get<CurrentUserPlaylistsResponse>(
-      `${this._baseUri}/playlists`,
-      { headers }
+      `${this._baseUri}/playlists`
     );
-  }
-
-  private getHeaders(token: string): HttpHeaders {
-    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 }
