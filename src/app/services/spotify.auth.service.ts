@@ -1,18 +1,14 @@
-import {
-  HttpClient,
-  HttpHeaderResponse,
-  HttpHeaders,
-  HttpParams,
-} from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { catchError, map, Observable, of } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
 export class SpotifyAuthService {
   clientId = '1c509bc759774b93b158762ca34d48dc';
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient, private _router: Router) {}
 
   async redirectToAuthCodeFlow(): Promise<void> {
     const verifier = this.generateCodeVerifier(128);
@@ -24,7 +20,10 @@ export class SpotifyAuthService {
       .set('client_id', this.clientId)
       .set('response_type', 'code')
       .set('redirect_uri', 'http://localhost:4200/callback')
-      .set('scope', 'user-read-private user-read-email')
+      .set(
+        'scope',
+        'user-read-private user-read-email playlist-read-private user-modify-playback-state user-read-playback-state user-read-recently-played user-top-read user-read-currently-playing'
+      )
       .set('code_challenge_method', 'S256')
       .set('code_challenge', challenge);
 
@@ -80,11 +79,24 @@ export class SpotifyAuthService {
     localStorage.setItem('access_token', token);
   }
 
-  get accessToken(): string | null {
+  clearToken(): void {
+    localStorage.removeItem('access_token');
+  }
+  getToken(): string | null {
     return localStorage.getItem('access_token');
   }
 
-  clearToken(): void {
+  logout(): void {
     localStorage.removeItem('access_token');
+    this._router.navigate(['/login']);
+  }
+  validateTokenWithServer(): Observable<boolean> {
+    return this._http.get('https://api.spotify.com/v1/me').pipe(
+      map(() => true), // If the request succeeds, return true
+      catchError((error) => {
+        console.warn('Token validation failed:', error);
+        return of(false); // Return false in case of an error
+      })
+    );
   }
 }

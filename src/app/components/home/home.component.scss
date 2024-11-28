@@ -1,0 +1,69 @@
+.home-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+section {
+  margin-bottom: 30px;
+}
+
+h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.playlist-container,
+.recently-played-container,
+.artist-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.playlist-card,
+.track-card,
+.artist-card {
+  width: 150px;
+  text-align: center;
+}
+
+.playlist-card img,
+.track-card img,
+.artist-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+p {
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+small {
+  font-size: 0.9em;
+  color: gray;
+}
+
+button {
+  margin: 1rem 1rem 0 0;
+  border: 0;
+  border-radius: 20px;
+  padding: 10px 3rem;
+  font-size: 0.8rem;
+  font-family: Arial, Helvetica, sans-serif;
+  text-transform: uppercase;
+  font-weight: bold;
+  background-color: #1ed760;
+  color: black;
+}
+
+button:hover {
+  background-color: #1fdf64;
+}

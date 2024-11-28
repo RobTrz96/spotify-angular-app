@@ -1,0 +1,14 @@
+<div>
+  <h2>Select a Device</h2>
+  <ul>
+    <li
+      *ngFor="let device of devices"
+      [class.active]="device.is_active"
+      (click)="selectDevice(device.id)"
+    >
+      <strong>{{ device.name }}</strong> ({{ device.type }}) Volume:
+      {{ device.volume_percent }}
+      <span *ngIf="device.is_active"> - Active</span>
+    </li>
+  </ul>
+</div>

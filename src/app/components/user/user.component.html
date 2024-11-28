@@ -1,1 +1,37 @@
-<p>user works!</p>
+<div class="container">
+  <mat-card *ngIf="userProfile" class="profile-card">
+    <button (click)="this.router.navigate(['/home'])">Home page</button>
+    <h2>Welcome, {{ userProfile.display_name }}</h2>
+    <img
+      [src]="userProfile.images[0].url"
+      alt="User Avatar"
+      *ngIf="userProfile.images.length"
+    />
+    <p>Email: {{ userProfile.email }}</p>
+    <p>Country: {{ userProfile.country }}</p>
+    <p>Nr of followers: {{ userProfile.followers.total }}</p>
+
+    <div *ngIf="playlists.length > 0">
+      <h3>Your Playlists:</h3>
+      <ul>
+        <li *ngFor="let playlist of playlists">
+          <div>
+            <img
+              [src]="playlist.images[0].url"
+              alt="Playlist Cover"
+              width="50"
+            />
+            <strong>{{ playlist.name }}</strong>
+            <p>Tracks: {{ playlist.tracks.total }}</p>
+            <button (click)="playPlaylist(playlist.uri)">Play</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="!userProfile">
+      <p>Loading user data...</p>
+    </div>
+  </mat-card>
+</div>
+<app-player></app-player>

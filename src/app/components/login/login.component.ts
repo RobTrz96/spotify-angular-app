@@ -14,4 +14,8 @@ export class LoginComponent {
   login(): void {
     this._spotifyAuthService.redirectToAuthCodeFlow();
   }
+
+  logout(): void {
+    this._spotifyAuthService.logout();
+  }
 }
