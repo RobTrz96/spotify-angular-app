@@ -17,12 +17,12 @@
         <li *ngFor="let playlist of playlists">
           <div>
             <img
-              [src]="playlist.images[0].url"
+              [src]="playlist?.images?.[0]?.url"
               alt="Playlist Cover"
               width="50"
             />
-            <strong>{{ playlist.name }}</strong>
-            <p>Tracks: {{ playlist.tracks.total }}</p>
+            <strong>{{ playlist?.name }}</strong>
+            <p>Tracks: {{ playlist?.tracks?.total }}</p>
             <button (click)="playPlaylist(playlist.uri)">Play</button>
           </div>
         </li>
