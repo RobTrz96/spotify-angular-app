@@ -1,6 +1,16 @@
 .home-page {
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  display: grid;
+  grid-template-rows: auto auto auto auto auto;
+  row-gap: 40px;
+  min-height: 100vh;
+
+  .app-player {
+    grid-row: -1;
+    background-color: #222;
+    color: white;
+    padding: 16px;
+    text-align: center;
+  }
 }
 
 header {
@@ -29,6 +39,7 @@ h2 {
 .track-card,
 .artist-card {
   width: 150px;
+  height: 215px;
   text-align: center;
 }
 
@@ -36,7 +47,7 @@ h2 {
 .track-card img,
 .artist-card img {
   width: 100%;
-  height: auto;
+  height: 70%;
   border-radius: 10px;
   cursor: pointer;
 }
