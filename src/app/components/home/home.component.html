@@ -1,7 +1,10 @@
 <div class="home-page">
   <header>
     <h1>Welcome to Spotify App!</h1>
-    <button (click)="this.router.navigate(['/user'])">Go to user page</button>
+    <div class="button-container">
+      <button (click)="this.router.navigate(['/user'])">Go to user page</button>
+    </div>
+
     <app-device-selection></app-device-selection>
     <app-login></app-login>
   </header>
@@ -18,7 +21,9 @@
           [src]="item.track.album.images[0].url"
           alt="{{ item.track.name }}"
         />
-        <p>{{ item.track.name }}</p>
+        <p class="track-title" title="{{ item.track.name }}">
+          {{ item.track.name }}
+        </p>
         <small>{{ item.track.artists[0].name }}</small>
       </div>
     </div>
@@ -32,7 +37,9 @@
         (click)="onPlaylistClick(playlist)"
       >
         <img [src]="playlist?.images?.[0]?.url" alt="{{ playlist?.name }}" />
-        <p>{{ playlist?.name }}</p>
+        <p class="track-title" title="{{ playlist?.name }}">
+          {{ playlist?.name }}
+        </p>
       </div>
     </div>
   </section>
@@ -40,13 +47,17 @@
   <section>
     <h2>Your Top Artists</h2>
     <div class="artist-container">
-      <div *ngFor="let artist of topArtists" class="artist-card">
+      <div
+        *ngFor="let artist of topArtists"
+        class="artist-card"
+        (click)="onArtistClick(artist.id)"
+      >
         <img [src]="artist.images[0].url" alt="{{ artist.name }}" />
-        <p>{{ artist.name }}</p>
+        <p class="track-title" title="{{ artist.name }}">{{ artist.name }}</p>
       </div>
     </div>
   </section>
-  <section>
-    <app-player class="app-player"></app-player>
-  </section>
+  <div class="player-container">
+    <app-player></app-player>
+  </div>
 </div>

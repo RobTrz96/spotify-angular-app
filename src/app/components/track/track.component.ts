@@ -33,11 +33,11 @@ export class TrackComponent implements OnInit {
   ngOnInit(): void {
     console.log('Track ID:', this.trackId);
     if (this.trackId) {
-      this.fetchTrackDetails();
+      this.getTrackDetails();
     }
   }
 
-  private fetchTrackDetails(): void {
+  private getTrackDetails(): void {
     this._spotifyTrackService
       .getTrackDetails(this.trackId)
       .pipe(

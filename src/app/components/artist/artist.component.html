@@ -1,0 +1,48 @@
+<div class="artist-info-container">
+  <div *ngIf="artist" class="artist-details">
+    <h1>{{ artist.name }}</h1>
+    <img [src]="artist.images[0].url" alt="{{ artist.name }}" />
+    <p><strong>Followers:</strong> {{ artist.followers.total }}</p>
+    <p><strong>Genres:</strong> {{ artist.genres.join(", ") }}</p>
+    <p><strong>Popularity:</strong> {{ artist.popularity }}</p>
+  </div>
+
+  <div *ngIf="!artist" class="artist-details">
+    <p>Loading artist info...</p>
+  </div>
+
+  <div class="top-tracks-container">
+    <h2>Top Tracks</h2>
+    <div class="top-tracks-grid">
+      <div
+        *ngFor="let track of topTracks"
+        class="top-track-item"
+        (click)="onTrackClick(track)"
+      >
+        <img [src]="track.album.images[0].url" alt="{{ track.name }}" />
+        <p class="track-title" title="{{ track.name }}">{{ track.name }}</p>
+        <p class="track-album" title="{{ track.album.name }}">
+          {{ track.album.name }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="albums-container">
+    <h2>Albums</h2>
+    <div class="albums-grid">
+      <div *ngFor="let album of albums" class="album-item">
+        <img [src]="album.images[0].url" alt="{{ album.name }}" />
+        <p class="album-title" title="{{ album.name }}">{{ album.name }}</p>
+        <p class="album-release">{{ album.release_date }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button (click)="redirectToHome()">Back to Home</button>
+  </div>
+  <div class="player-container">
+    <app-player></app-player>
+  </div>
+</div>

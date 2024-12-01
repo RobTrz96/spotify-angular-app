@@ -67,6 +67,10 @@ export class HomeComponent implements OnInit {
       });
   }
 
+  onArtistClick(artistId: string): void {
+    this.router.navigate(['/artist', artistId]);
+  }
+
   onPlaylistClick(playlist: CurrentUserPlaylists): void {
     this._spotifyPlayerService
       .playPlaylist(playlist.uri)

@@ -8,7 +8,7 @@ import { UserTopArtistsResponse } from '../interfaces/user.top.artists.interface
   providedIn: 'root',
 })
 export class SpotifyApiService {
-  private _baseUri = 'https://api.spotify.com/v1';
+  private readonly _baseUri = 'https://api.spotify.com/v1';
 
   constructor(private _http: HttpClient) {}
 

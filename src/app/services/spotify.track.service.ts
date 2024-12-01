@@ -8,12 +8,12 @@ import { TrackObject } from '../interfaces/track.object.interface';
   providedIn: 'root',
 })
 export class SpotifyTrackService {
-  private readonly baseUri = 'https://api.spotify.com/v1';
+  private readonly _baseUri = 'https://api.spotify.com/v1';
 
   constructor(private _http: HttpClient) {}
 
   getTrackDetails(trackId: string): Observable<TrackObject> {
-    const url = `${this.baseUri}/tracks/${trackId}`;
+    const url = `${this._baseUri}/tracks/${trackId}`;
     return this._http.get<TrackObject>(url);
   }
 }

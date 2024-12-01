@@ -8,7 +8,7 @@ import { CurrentlyPlayingResponse } from '../interfaces/current.track.interface'
   providedIn: 'root',
 })
 export class SpotifyPlayerService {
-  private _baseUrl = 'https://api.spotify.com/v1/me';
+  private readonly _baseUrl = 'https://api.spotify.com/v1/me';
   constructor(private _http: HttpClient) {}
 
   nextTrack(): Observable<void> {

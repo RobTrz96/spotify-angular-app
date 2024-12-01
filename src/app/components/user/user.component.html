@@ -1,6 +1,8 @@
 <div class="container">
   <mat-card *ngIf="userProfile" class="profile-card">
-    <button (click)="this.router.navigate(['/home'])">Home page</button>
+    <div class="button-container">
+      <button (click)="this.router.navigate(['/home'])">Home page</button>
+    </div>
     <h2>Welcome, {{ userProfile.display_name }}</h2>
     <img
       [src]="userProfile.images[0].url"
@@ -23,7 +25,9 @@
             />
             <strong>{{ playlist?.name }}</strong>
             <p>Tracks: {{ playlist?.tracks?.total }}</p>
-            <button (click)="playPlaylist(playlist.uri)">Play</button>
+            <div class="button-container">
+              <button (click)="playPlaylist(playlist.uri)">Play</button>
+            </div>
           </div>
         </li>
       </ul>

@@ -31,20 +31,7 @@
     </p>
     <p><strong>Popularity:</strong> {{ trackDetails.popularity }}</p>
   </mat-card-content>
-
-  <mat-card-actions>
-    <a
-      mat-raised-button
-      color="primary"
-      *ngIf="trackDetails.preview_url"
-      [href]="trackDetails.preview_url"
-      target="_blank"
-    >
-      Listen Preview
-    </a>
-  </mat-card-actions>
 </mat-card>
-
 <div *ngIf="!isLoading && !trackDetails" class="error">
   <p>Error loading track details. Please try again.</p>
 </div>
