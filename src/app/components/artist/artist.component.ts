@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, NgIf } from '@angular/common';
 import { catchError, of } from 'rxjs';
 import { ArtistTopTracks } from '../../interfaces/artist.top.tracks.interface';
-import { ArtistAlbums } from '../../interfaces/aratist.albums.interface';
+import { ArtistAlbums } from '../../interfaces/artist.albums.interface';
 import { PlayerComponent } from '../player/player.component';
 import { SpotifyPlayerService } from '../../services/spotify.player.service';
 import { Track } from '../../interfaces/recently.played.tracks.interface';
@@ -18,6 +18,7 @@ import { Track } from '../../interfaces/recently.played.tracks.interface';
   styleUrl: './artist.component.scss',
 })
 export class ArtistComponent implements OnInit {
+  artistId: string | null = null;
   artist: Artist | null = null;
   topTracks: ArtistTopTracks[] = [];
   albums: ArtistAlbums[] = [];
@@ -30,6 +31,7 @@ export class ArtistComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.artistId = this._route.snapshot.paramMap.get('id')!;
     this.getArtistDetails();
     this.getArtistTopTracks();
     this.getArtistAlbums();
@@ -53,10 +55,13 @@ export class ArtistComponent implements OnInit {
       });
   }
 
+  onAlbumClick(albumId: string): void {
+    this._router.navigate(['/album', albumId]);
+  }
+
   private getArtistDetails(): void {
-    const artistId = this._route.snapshot.paramMap.get('id')!;
     this._spotifyArtistService
-      .getArtist(artistId)
+      .getArtist(this.artistId!)
       .pipe(
         catchError((error) => {
           console.error('Error fetching artist details!', error);
@@ -73,9 +78,8 @@ export class ArtistComponent implements OnInit {
   }
 
   private getArtistTopTracks(): void {
-    const artistId = this._route.snapshot.paramMap.get('id')!;
     this._spotifyArtistService
-      .getArtistTopTracks(artistId)
+      .getArtistTopTracks(this.artistId!)
       .pipe(
         catchError((error) => {
           console.error('Error fetching artist top tracks:', error);
@@ -88,9 +92,8 @@ export class ArtistComponent implements OnInit {
   }
 
   private getArtistAlbums(): void {
-    const artistId = this._route.snapshot.paramMap.get('id')!;
     this._spotifyArtistService
-      .getArtistAlbums(artistId)
+      .getArtistAlbums(this.artistId!)
       .pipe(
         catchError((error) => {
           console.error('Error fetching artist albums:', error);

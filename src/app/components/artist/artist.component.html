@@ -31,7 +31,11 @@
   <div class="albums-container">
     <h2>Albums</h2>
     <div class="albums-grid">
-      <div *ngFor="let album of albums" class="album-item">
+      <div
+        *ngFor="let album of albums"
+        class="album-item"
+        (click)="onAlbumClick(album.id)"
+      >
         <img [src]="album.images[0].url" alt="{{ album.name }}" />
         <p class="album-title" title="{{ album.name }}">{{ album.name }}</p>
         <p class="album-release">{{ album.release_date }}</p>
@@ -42,7 +46,7 @@
   <div class="button-container">
     <button (click)="redirectToHome()">Back to Home</button>
   </div>
-  <div class="player-container">
+  <div>
     <app-player></app-player>
   </div>
 </div>

@@ -1,0 +1,60 @@
+<div class="album-container">
+  <div *ngIf="album" class="album-header">
+    <img
+      [src]="album.images[0].url"
+      alt="{{ album.name }}"
+      class="album-cover"
+    />
+    <div class="album-info"></div>
+    <h1>{{ album.name }}</h1>
+    <p>Release date: {{ album.release_date }}</p>
+    <p>Label: {{ album.label }}</p>
+    <p>Total tracks: {{ album.total_tracks }}</p>
+    <p>Popularity: {{ album.popularity }}</p>
+  </div>
+
+  <div *ngIf="!album">
+    <p>Loading album info...</p>
+  </div>
+  <div class="tracks-table">
+    <div class="tracks-header">
+      <div class="track-number">#</div>
+      <div class="track-title">Title</div>
+      <div class="track-duration">Duration</div>
+    </div>
+
+    <div
+      *ngFor="let track of tracks; let i = index"
+      class="track-row"
+      (click)="onTrackClick(track)"
+    >
+      <div class="track-number">{{ (currentPage - 1) * limit + i + 1 }}</div>
+      <div class="track-title">
+        <p class="track-name">{{ track.name }}</p>
+        <p class="track-artist">{{ track.artists[0].name }}</p>
+      </div>
+      <div class="track-duration">
+        {{ track.duration_ms | date : "m:ss" }}
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination-controls">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">
+      Previous
+    </button>
+    <span>Page {{ currentPage }} of {{ Math.ceil(totalTracks / limit) }}</span>
+    <button
+      (click)="nextPage()"
+      [disabled]="currentPage * limit >= totalTracks"
+    >
+      Next
+    </button>
+  </div>
+  <div class="button-container">
+    <button (click)="redirectToHome()">Back to Home</button>
+  </div>
+  <div>
+    <app-player></app-player>
+  </div>
+</div>

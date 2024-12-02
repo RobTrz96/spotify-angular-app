@@ -11,21 +11,7 @@
     height: 640px;
   }
 }
-.player-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;
-  background-color: #333;
-  color: #fff;
-  z-index: 1000;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-}
+
 .top-tracks-container,
 .albums-container {
   margin: 20px;
@@ -92,33 +78,5 @@
     text-overflow: ellipsis;
     width: 90%;
     display: inline-block;
-  }
-}
-
-.button-container {
-  text-align: center;
-  margin-top: 20px;
-
-  button {
-    margin: 1rem 1rem 0 0;
-    border: 0;
-    border-radius: 20px;
-    padding: 10px 3rem;
-    font-size: 0.8rem;
-    font-family: Arial, Helvetica, sans-serif;
-    text-transform: uppercase;
-    font-weight: bold;
-    background-color: #1ed760;
-    color: black;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-
-    &:hover {
-      background-color: #1fdf64;
-      transform: scale(1.05);
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
   }
 }
