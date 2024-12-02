@@ -1,0 +1,99 @@
+<div class="search-container">
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="query"
+      placeholder="Search Spotify..."
+      class="search-input"
+    />
+    <select [(ngModel)]="searchType" class="search-type">
+      <option value="track">Tracks</option>
+      <option value="artist">Artists</option>
+      <option value="album">Albums</option>
+    </select>
+    <button (click)="onSearch()" class="search-button">Search</button>
+  </div>
+
+  <div *ngIf="resultsOpen">
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div
+      *ngIf="tracks.length > 0 && searchType === 'track'"
+      class="search-results"
+    >
+      <div *ngFor="let track of tracks" class="track-item">
+        <img
+          [src]="track.album.images[0].url"
+          alt="{{ track.name }}"
+          class="track-image"
+        />
+        <div class="track-info">
+          <p class="track-name">{{ track.name }}</p>
+          <p class="track-artist">
+            {{ getArtistsString(track.artists) }}
+          </p>
+          <p class="track-album">{{ track.album.name }}</p>
+        </div>
+        <a (click)="playTrack(track)" target="_blank" class="track-link"
+          >Play</a
+        >
+      </div>
+    </div>
+
+    <div
+      *ngIf="artists.length > 0 && searchType === 'artist'"
+      class="search-results"
+    >
+      <div *ngFor="let artist of artists" class="artist-item">
+        <img
+          [src]="artist.images![0].url || 'default-artist-image.png'"
+          alt="{{ artist.name }}"
+          class="artist-image"
+        />
+        <div class="artist-info">
+          <p class="artist-name">{{ artist.name }}</p>
+          <p class="artist-genres">
+            {{ artist.genres?.join(", ") || "No genres available" }}
+          </p>
+          <p class="artist-followers">
+            {{ artist.followers?.total | number }} Followers
+          </p>
+        </div>
+        <a
+          [routerLink]="['/artist', artist.id]"
+          target="_blank"
+          class="artist-link"
+          >View</a
+        >
+      </div>
+    </div>
+
+    <div
+      *ngIf="albums.length > 0 && searchType === 'album'"
+      class="search-results"
+    >
+      <div *ngFor="let album of albums" class="album-item">
+        <img
+          [src]="album.images[0].url"
+          alt="{{ album.name }}"
+          class="album-image"
+        />
+        <div class="album-info">
+          <p class="album-name">{{ album.name }}</p>
+          <p class="album-artist">
+            {{ getArtistsString(album.artists) }}
+          </p>
+          <p class="album-release-date">Released: {{ album.release_date }}</p>
+        </div>
+        <a
+          [routerLink]="['/album', album.id]"
+          target="_blank"
+          class="album-link"
+          >View</a
+        >
+      </div>
+    </div>
+  </div>
+</div>

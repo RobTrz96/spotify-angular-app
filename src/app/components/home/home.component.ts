@@ -21,6 +21,7 @@ import {
   CurrentUserPlaylistsResponse,
 } from '../../interfaces/current.user.playlists.interface';
 import { SpotifyUserService } from '../../services/spotify.user.service';
+import { SearchComponent } from '../search/search.component';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +31,7 @@ import { SpotifyUserService } from '../../services/spotify.user.service';
     LoginComponent,
     PlayerComponent,
     DeviceSelectionComponent,
+    SearchComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
