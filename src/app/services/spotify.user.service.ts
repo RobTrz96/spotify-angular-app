@@ -8,7 +8,7 @@ import { CurrentUserPlaylistsResponse } from '../interfaces/current.user.playlis
   providedIn: 'root',
 })
 export class SpotifyUserService {
-  private _baseUri = 'https://api.spotify.com/v1/me';
+  private readonly _baseUri = 'https://api.spotify.com/v1/me';
 
   constructor(private _http: HttpClient) {}
 

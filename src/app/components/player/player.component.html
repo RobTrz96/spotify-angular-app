@@ -4,6 +4,8 @@
       *ngIf="currentTrack"
       [src]="currentTrack.album.images[0].url"
       alt="Album Art"
+      (click)="viewTrackDetails()"
+      class="clickable"
     />
     <div>
       <h3>{{ currentTrack?.name || "No track playing" }}</h3>
@@ -28,4 +30,9 @@
       (input)="adjustVolume($event)"
     />
   </div>
+</div>
+
+<div class="track-details-modal" *ngIf="showTrackDetails">
+  <button class="close" (click)="closeTrackDetails()">×</button>
+  <app-track [trackId]="currentTrack?.id || ''"></app-track>
 </div>

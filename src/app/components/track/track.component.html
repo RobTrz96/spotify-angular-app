@@ -1,0 +1,37 @@
+<div *ngIf="isLoading" class="loading">
+  <mat-spinner></mat-spinner>
+  <p>Loading track details...</p>
+</div>
+
+<mat-card *ngIf="!isLoading && trackDetails" class="track-card">
+  <div class="track-header">
+    <img
+      *ngIf="trackDetails.album.images.length > 0"
+      [src]="trackDetails.album.images[0].url"
+      alt="Album Art"
+      class="album-art"
+    />
+    <div class="track-info">
+      <h2>{{ trackDetails.name }}</h2>
+      <p class="artists">{{ artistNames }}</p>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <mat-card-content>
+    <p><strong>Album:</strong> {{ trackDetails.album.name }}</p>
+    <p>
+      <strong>Duration:</strong>
+      {{ trackDetails.duration_ms | duration }}
+    </p>
+    <p>
+      <strong>Released in:</strong>
+      {{ trackDetails.album.release_date }}
+    </p>
+    <p><strong>Popularity:</strong> {{ trackDetails.popularity }}</p>
+  </mat-card-content>
+</mat-card>
+<div *ngIf="!isLoading && !trackDetails" class="error">
+  <p>Error loading track details. Please try again.</p>
+</div>

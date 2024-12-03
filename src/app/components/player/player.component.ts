@@ -6,11 +6,12 @@ import {
   CurrentlyPlayingResponse,
   Track,
 } from '../../interfaces/current.track.interface';
+import { TrackComponent } from '../track/track.component';
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TrackComponent],
   templateUrl: './player.component.html',
   styleUrl: './player.component.scss',
 })
@@ -18,6 +19,7 @@ export class PlayerComponent implements OnInit {
   currentTrack: Track | null = null;
   isPlaying: boolean = false;
   volume: number = 50;
+  showTrackDetails = false;
   private _playbackSubscription: Subscription | undefined;
 
   constructor(private _spotifyPlayerService: SpotifyPlayerService) {}
@@ -106,6 +108,14 @@ export class PlayerComponent implements OnInit {
       .subscribe(() => {
         console.log(`Playing playlist: ${playlistUri}`);
       });
+  }
+
+  viewTrackDetails(): void {
+    this.showTrackDetails = true;
+  }
+
+  closeTrackDetails(): void {
+    this.showTrackDetails = false;
   }
 
   private updatePlaybackState(): void {
