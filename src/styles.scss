@@ -31,3 +31,20 @@ body {
     }
   }
 }
+.mat-mdc-snack-bar-container {
+  &.error-snackbar {
+    --mdc-snackbar-container-color: #f44336;
+    .mdc-snackbar__label {
+      color: black !important;
+    }
+  }
+}
+
+.mat-mdc-snack-bar-container {
+  &.success-snackbar {
+    --mdc-snackbar-container-color: #1ed760;
+    .mdc-snackbar__label {
+      color: black !important;
+    }
+  }
+}

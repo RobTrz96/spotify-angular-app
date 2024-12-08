@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { PlayerComponent } from '../player/player.component';
 import { SpotifyPlayerService } from '../../services/spotify.player.service';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 
 @Component({
   selector: 'app-album',
@@ -26,7 +27,8 @@ export class AlbumComponent implements OnInit {
     private _spotifyAlbumService: SpotifyAlbumService,
     private _spotifyPlayerService: SpotifyPlayerService,
     private _route: ActivatedRoute,
-    private _router: Router
+    private _router: Router,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -40,13 +42,20 @@ export class AlbumComponent implements OnInit {
     this._spotifyPlayerService
       .playTrack(track.uri)
       .pipe(
-        catchError((error) => {
-          console.error(`Error playing track: ${track.name}`, error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            `Error playing track: ${track.name}`,
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe(() => {
-        console.log(`Playing track: ${track.name}`);
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            `Playing track: ${track.name}`,
+            3000
+          );
       });
   }
 
@@ -71,17 +80,16 @@ export class AlbumComponent implements OnInit {
     this._spotifyAlbumService
       .getAlbum(this.albumId!)
       .pipe(
-        catchError((error) => {
-          console.error('Error fetching album details!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching album details!',
+            5000
+          );
           return of(null);
         })
       )
       .subscribe((album) => {
-        if (album) {
-          this.album = album;
-        } else {
-          console.log('Album data is unavailable');
-        }
+        this.album = album;
       });
   }
 
@@ -90,8 +98,11 @@ export class AlbumComponent implements OnInit {
     this._spotifyAlbumService
       .getAlbumTracks(this.albumId!, this.limit, offset)
       .pipe(
-        catchError((error) => {
-          console.error('Error fetching album tracks:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching album tracks',
+            5000
+          );
           return of({ tracks: [] });
         })
       )
@@ -100,6 +111,10 @@ export class AlbumComponent implements OnInit {
           this.tracks = tracks.items;
           this.totalTracks = tracks.total;
         } else {
+          this._spotifyErrorHandlerService.showError(
+            'No tracks to fetch',
+            5000
+          );
           this.tracks = [];
         }
       });

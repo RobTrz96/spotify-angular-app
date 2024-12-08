@@ -7,7 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { DurationPipe } from '../../pipes/duration.pipe';
-import { ActivatedRoute } from '@angular/router';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 @Component({
   selector: 'app-track',
   standalone: true,
@@ -28,7 +28,10 @@ export class TrackComponent implements OnInit {
   isLoading = true;
   isPlaying = false;
 
-  constructor(private _spotifyTrackService: SpotifyTrackService) {}
+  constructor(
+    private _spotifyTrackService: SpotifyTrackService,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
+  ) {}
 
   ngOnInit(): void {
     console.log('Track ID:', this.trackId);
@@ -41,8 +44,11 @@ export class TrackComponent implements OnInit {
     this._spotifyTrackService
       .getTrackDetails(this.trackId)
       .pipe(
-        catchError((error) => {
-          console.error('Error fetching track details:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching track details:',
+            5000
+          );
           return of(null);
         })
       )

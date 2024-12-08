@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ElementRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SpotifyPlayerService } from '../../services/spotify.player.service';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 
 @Component({
   selector: 'app-search',
@@ -28,7 +29,8 @@ export class SearchComponent {
   constructor(
     private _spotifySearchService: SpotifySearchService,
     private _eRef: ElementRef,
-    private _spotifyPlayerService: SpotifyPlayerService
+    private _spotifyPlayerService: SpotifyPlayerService,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
   ) {}
 
   onSearch(): void {
@@ -39,13 +41,20 @@ export class SearchComponent {
     this._spotifyPlayerService
       .playTrack(track.uri)
       .pipe(
-        catchError((error) => {
-          console.error(`Error playing track: ${track.name}`, error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            `Error playing track: ${track.name}`,
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe(() => {
-        console.log(`Playing track: ${track.name}`);
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            `Playing track: ${track.name}`,
+            1000
+          );
       });
   }
 
@@ -65,8 +74,11 @@ export class SearchComponent {
       this._spotifySearchService
         .search(this.query, this.searchType)
         .pipe(
-          catchError((error) => {
-            console.error('Error fetching search results:', error);
+          catchError(() => {
+            this._spotifyErrorHandlerService.showError(
+              'Error fetching search results:',
+              5000
+            );
             this.errorMessage =
               'Failed to fetch search results. Please try again.';
             this.clearResults();
@@ -75,6 +87,10 @@ export class SearchComponent {
         )
         .subscribe((response) => {
           if (response) {
+            this._spotifyErrorHandlerService.showSuccess(
+              'Search complete',
+              1000
+            );
             this.clearResults();
             if (this.searchType === 'track') {
               this.tracks = response.tracks.items;

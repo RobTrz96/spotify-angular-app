@@ -15,13 +15,15 @@ import {
   UserTopArtists,
   UserTopArtistsResponse,
 } from '../../interfaces/user.top.artists.interface';
-import { catchError, of } from 'rxjs';
+import { catchError, from, of } from 'rxjs';
 import {
   CurrentUserPlaylists,
   CurrentUserPlaylistsResponse,
 } from '../../interfaces/current.user.playlists.interface';
 import { SpotifyUserService } from '../../services/spotify.user.service';
 import { SearchComponent } from '../search/search.component';
+import { ChartComponent } from '../chart/chart.component';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +34,7 @@ import { SearchComponent } from '../search/search.component';
     PlayerComponent,
     DeviceSelectionComponent,
     SearchComponent,
+    ChartComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -46,7 +49,8 @@ export class HomeComponent implements OnInit {
     public router: Router,
     private _spotifyApiService: SpotifyApiService,
     private _spotifyPlayerService: SpotifyPlayerService,
-    private _spotifyUserService: SpotifyUserService
+    private _spotifyUserService: SpotifyUserService,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -59,45 +63,45 @@ export class HomeComponent implements OnInit {
     this._spotifyPlayerService
       .playTrack(track.uri)
       .pipe(
-        catchError((error) => {
-          console.error(`Error playing track: ${track.name}`, error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            `Error playing track: ${track.name}`,
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe(() => {
-        console.log(`Playing track: ${track.name}`);
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            `Playing track: ${track.name}`,
+            3000
+          );
       });
   }
 
   onArtistClick(artistId: string): void {
-    this.router.navigate(['/artist', artistId]);
+    from(this.router.navigate(['/artist', artistId]));
   }
 
   onPlaylistClick(playlist: CurrentUserPlaylists): void {
     this._spotifyPlayerService
       .playPlaylist(playlist.uri)
       .pipe(
-        catchError((error) => {
-          console.error(`Error playing playlist: ${playlist.name}`, error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            `Error playing playlist: ${playlist.name}`,
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe(() => {
-        console.log(`Playing playlist: ${playlist.name}`);
-      });
-  }
-
-  playPlaylist(playlistUri: string): void {
-    this._spotifyPlayerService
-      .playPlaylist(playlistUri)
-      .pipe(
-        catchError((error) => {
-          console.error('Error starting playlist playback:', error);
-          return of(null);
-        })
-      )
-      .subscribe({
-        next: () => console.log(`Playing playlist: ${playlistUri}`),
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            `Playing playlist: ${playlist.name}`,
+            1000
+          );
       });
   }
 
@@ -105,8 +109,11 @@ export class HomeComponent implements OnInit {
     this._spotifyApiService
       .getTopArtists()
       .pipe(
-        catchError((error) => {
-          console.error('Error obtaining users top artists!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error obtaining users top artists!',
+            5000
+          );
           return of({
             href: '',
             limit: 0,
@@ -127,8 +134,11 @@ export class HomeComponent implements OnInit {
     this._spotifyUserService
       .getUserPlaylists()
       .pipe(
-        catchError((error) => {
-          console.error('Error fetching user playlists:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching user playlists:',
+            5000
+          );
           return of({ items: [] });
         })
       )
@@ -141,8 +151,11 @@ export class HomeComponent implements OnInit {
     this._spotifyApiService
       .getRecentlyPlayed()
       .pipe(
-        catchError((error) => {
-          console.error('Error obtaining users recently played tracks!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error obtaining users recently played tracks!',
+            5000
+          );
           return of({
             href: '',
             limit: 0,

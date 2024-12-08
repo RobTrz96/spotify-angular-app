@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RecentlyPlayedTracksResponse } from '../interfaces/recently.played.tracks.interface';
 import { UserTopArtistsResponse } from '../interfaces/user.top.artists.interface';
+import { UserTopTracksResponse } from '../interfaces/user.top.tracks.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -14,13 +15,19 @@ export class SpotifyApiService {
 
   getRecentlyPlayed(): Observable<RecentlyPlayedTracksResponse> {
     return this._http.get<RecentlyPlayedTracksResponse>(
-      `${this._baseUri}/me/player/recently-played`
+      `${this._baseUri}/me/player/recently-played?limit=14`
     );
   }
 
   getTopArtists(): Observable<UserTopArtistsResponse> {
     return this._http.get<UserTopArtistsResponse>(
-      `${this._baseUri}/me/top/artists`
+      `${this._baseUri}/me/top/artists?limit=14`
+    );
+  }
+
+  getTopTracks(): Observable<UserTopTracksResponse> {
+    return this._http.get<UserTopTracksResponse>(
+      `${this._baseUri}/me/top/tracks?limit=10`
     );
   }
 }

@@ -9,6 +9,7 @@ import { ArtistAlbums } from '../../interfaces/artist.albums.interface';
 import { PlayerComponent } from '../player/player.component';
 import { SpotifyPlayerService } from '../../services/spotify.player.service';
 import { Track } from '../../interfaces/recently.played.tracks.interface';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 
 @Component({
   selector: 'app-artist',
@@ -27,7 +28,8 @@ export class ArtistComponent implements OnInit {
     private _spotifyArtistService: SpotifyArtistService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private _spotifyPlayerService: SpotifyPlayerService
+    private _spotifyPlayerService: SpotifyPlayerService,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -45,13 +47,20 @@ export class ArtistComponent implements OnInit {
     this._spotifyPlayerService
       .playTrack(track.uri)
       .pipe(
-        catchError((error) => {
-          console.error(`Error playing track: ${track.name}`, error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            `Error playing track: ${track.name}`,
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe(() => {
-        console.log(`Playing track: ${track.name}`);
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            `Playing track: ${track.name}`,
+            1000
+          );
       });
   }
 
@@ -63,17 +72,16 @@ export class ArtistComponent implements OnInit {
     this._spotifyArtistService
       .getArtist(this.artistId!)
       .pipe(
-        catchError((error) => {
-          console.error('Error fetching artist details!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching artist details!',
+            5000
+          );
           return of(null);
         })
       )
       .subscribe((artist) => {
-        if (artist) {
-          this.artist = artist;
-        } else {
-          console.log('Artist data is unavailable');
-        }
+        this.artist = artist;
       });
   }
 
@@ -81,8 +89,11 @@ export class ArtistComponent implements OnInit {
     this._spotifyArtistService
       .getArtistTopTracks(this.artistId!)
       .pipe(
-        catchError((error) => {
-          console.error('Error fetching artist top tracks:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching artist top tracks:',
+            5000
+          );
           return of({ tracks: [] });
         })
       )
@@ -95,8 +106,11 @@ export class ArtistComponent implements OnInit {
     this._spotifyArtistService
       .getArtistAlbums(this.artistId!)
       .pipe(
-        catchError((error) => {
-          console.error('Error fetching artist albums:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching artist albums:',
+            5000
+          );
           return of({ items: [] });
         })
       )

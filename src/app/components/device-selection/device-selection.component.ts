@@ -6,6 +6,7 @@ import {
   SelectDevice,
   SelectDeviceResponse,
 } from '../../interfaces/device.selection.interface';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 
 @Component({
   selector: 'app-device-selection',
@@ -18,7 +19,10 @@ export class DeviceSelectionComponent implements OnInit {
   devices: SelectDevice[] = [];
   private _refreshInterval: Subscription | undefined;
 
-  constructor(private _spotifyPlayerService: SpotifyPlayerService) {}
+  constructor(
+    private _spotifyPlayerService: SpotifyPlayerService,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
+  ) {}
 
   ngOnInit(): void {
     this.loadDevices();
@@ -29,13 +33,19 @@ export class DeviceSelectionComponent implements OnInit {
     this._spotifyPlayerService
       .transferPlayback(deviceId)
       .pipe(
-        catchError((error) => {
-          console.error('Error transferring playback to device!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            `Error transferring playback to device: ${deviceId}`,
+            5000
+          );
           return of(null);
         })
       )
       .subscribe(() => {
-        console.log(`Playback transferred to device: ${deviceId}`);
+        this._spotifyErrorHandlerService.showSuccess(
+          `Playback transferred to device: ${deviceId}`,
+          1000
+        );
       });
   }
 
@@ -43,8 +53,11 @@ export class DeviceSelectionComponent implements OnInit {
     this._spotifyPlayerService
       .getAvailableDevices()
       .pipe(
-        catchError((error) => {
-          console.error('Error obtaining device list!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error obtaining device list!',
+            5000
+          );
           return of({ devices: [] });
         })
       )

@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { SpotifyAuthService } from '../../services/spotify.auth.service';
 import { catchError, of } from 'rxjs';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 
 @Component({
   selector: 'app-callback',
@@ -15,7 +16,8 @@ export class CallbackComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _spotifyAuthService: SpotifyAuthService,
-    private _router: Router
+    private _router: Router,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -29,14 +31,21 @@ export class CallbackComponent implements OnInit {
         this._spotifyAuthService
           .getAccessToken(code)
           .pipe(
-            catchError((error) => {
-              console.error('Error obtaining access token!', error);
+            catchError(() => {
+              this._spotifyErrorHandlerService.showError(
+                'Error obtaining access token!',
+                5000
+              );
               this._router.navigate(['/login']);
               return of(null);
             })
           )
           .subscribe((token) => {
             if (token) {
+              this._spotifyErrorHandlerService.showSuccess(
+                'Successful login',
+                1000
+              );
               this._spotifyAuthService.saveToken(token);
               const url = new URL(window.location.href);
               url.searchParams.delete('code');
@@ -45,7 +54,10 @@ export class CallbackComponent implements OnInit {
             }
           });
       } else {
-        console.error('Authorization code not found!');
+        this._spotifyErrorHandlerService.showError(
+          'Authorization code not found!',
+          5000
+        );
         this._router.navigate(['/login']);
       }
     });
