@@ -64,7 +64,7 @@ export class SpotifyPlayerService {
 
   playTrack(uri: string): Observable<boolean> {
     return this._http
-      .put<void>(`${this._baseUrl}/player/pslay`, { uris: [uri] }, {})
+      .put<void>(`${this._baseUrl}/player/play`, { uris: [uri] }, {})
       .pipe(map(() => true));
   }
 

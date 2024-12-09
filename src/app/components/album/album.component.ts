@@ -23,6 +23,7 @@ export class AlbumComponent implements OnInit {
   currentPage: number = 1;
   limit: number = 20;
   totalTracks: number = 0;
+
   constructor(
     private _spotifyAlbumService: SpotifyAlbumService,
     private _spotifyPlayerService: SpotifyPlayerService,

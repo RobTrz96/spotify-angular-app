@@ -22,6 +22,7 @@
               [src]="playlist?.images?.[0]?.url"
               alt="Playlist Cover"
               width="50"
+              (click)="onPlaylistClick(playlist.uri)"
             />
             <strong>{{ playlist?.name }}</strong>
             <p>Tracks: {{ playlist?.tracks?.total }}</p>

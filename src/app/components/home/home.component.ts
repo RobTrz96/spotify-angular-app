@@ -15,7 +15,7 @@ import {
   UserTopArtists,
   UserTopArtistsResponse,
 } from '../../interfaces/user.top.artists.interface';
-import { catchError, from, of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import {
   CurrentUserPlaylists,
   CurrentUserPlaylistsResponse,
@@ -81,28 +81,11 @@ export class HomeComponent implements OnInit {
   }
 
   onArtistClick(artistId: string): void {
-    from(this.router.navigate(['/artist', artistId]));
+    this.router.navigate(['/artist', artistId]);
   }
 
-  onPlaylistClick(playlist: CurrentUserPlaylists): void {
-    this._spotifyPlayerService
-      .playPlaylist(playlist.uri)
-      .pipe(
-        catchError(() => {
-          this._spotifyErrorHandlerService.showError(
-            `Error playing playlist: ${playlist.name}`,
-            5000
-          );
-          return of(null);
-        })
-      )
-      .subscribe((result) => {
-        if (result)
-          this._spotifyErrorHandlerService.showSuccess(
-            `Playing playlist: ${playlist.name}`,
-            1000
-          );
-      });
+  onPlaylistClick(playlistId: string): void {
+    this.router.navigate(['/playlist', playlistId]);
   }
 
   private getUserTopArtists(): void {

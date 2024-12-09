@@ -56,6 +56,10 @@ export class UserComponent implements OnInit {
           );
       });
   }
+
+  onPlaylistClick(playlistId: string): void {
+    this.router.navigate(['/playlist', playlistId]);
+  }
   private getData(): void {
     this._spotifyUserService
       .getUserProfile()

@@ -35,7 +35,7 @@
       <div
         *ngFor="let playlist of playlists"
         class="playlist-card"
-        (click)="onPlaylistClick(playlist)"
+        (click)="onPlaylistClick(playlist.uri)"
       >
         <img [src]="playlist?.images?.[0]?.url" alt="{{ playlist?.name }}" />
         <p class="track-title" title="{{ playlist?.name }}">
