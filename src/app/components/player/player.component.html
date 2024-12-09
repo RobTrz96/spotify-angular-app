@@ -30,6 +30,14 @@
       (input)="adjustVolume($event)"
     />
   </div>
+  <button (click)="toggleQueue()">
+    {{ showQueue ? "Hide Queue" : "Show Queue" }}
+  </button>
+  @if (showQueue) {
+  <div>
+    <app-queue></app-queue>
+  </div>
+  }
 </div>
 
 <div class="track-details-modal" *ngIf="showTrackDetails">

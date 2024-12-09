@@ -24,6 +24,7 @@ import { SpotifyUserService } from '../../services/spotify.user.service';
 import { SearchComponent } from '../search/search.component';
 import { ChartComponent } from '../chart/chart.component';
 import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
+import { QueueComponent } from '../queue/queue.component';
 
 @Component({
   selector: 'app-home',

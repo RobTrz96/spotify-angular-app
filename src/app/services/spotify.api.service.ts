@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { RecentlyPlayedTracksResponse } from '../interfaces/recently.played.tracks.interface';
 import { UserTopArtistsResponse } from '../interfaces/user.top.artists.interface';
 import { UserTopTracksResponse } from '../interfaces/user.top.tracks.interface';
+import { QueueResponse } from '../interfaces/queue.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -29,5 +30,9 @@ export class SpotifyApiService {
     return this._http.get<UserTopTracksResponse>(
       `${this._baseUri}/me/top/tracks?limit=10`
     );
+  }
+
+  getQueue(): Observable<QueueResponse> {
+    return this._http.get<QueueResponse>(`${this._baseUri}/me/player/queue`);
   }
 }
