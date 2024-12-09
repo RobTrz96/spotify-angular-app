@@ -1,6 +1,8 @@
 <div class="container">
   <mat-card *ngIf="userProfile" class="profile-card">
-    <button (click)="this.router.navigate(['/home'])">Home page</button>
+    <div class="button-container">
+      <button (click)="this.router.navigate(['/home'])">Home page</button>
+    </div>
     <h2>Welcome, {{ userProfile.display_name }}</h2>
     <img
       [src]="userProfile.images[0].url"
@@ -17,13 +19,16 @@
         <li *ngFor="let playlist of playlists">
           <div>
             <img
-              [src]="playlist.images[0].url"
+              [src]="playlist?.images?.[0]?.url"
               alt="Playlist Cover"
               width="50"
+              (click)="onPlaylistClick(playlist.uri)"
             />
-            <strong>{{ playlist.name }}</strong>
-            <p>Tracks: {{ playlist.tracks.total }}</p>
-            <button (click)="playPlaylist(playlist.uri)">Play</button>
+            <strong>{{ playlist?.name }}</strong>
+            <p>Tracks: {{ playlist?.tracks?.total }}</p>
+            <div class="button-container">
+              <button (click)="playPlaylist(playlist.uri)">Play</button>
+            </div>
           </div>
         </li>
       </ul>
@@ -33,5 +38,5 @@
       <p>Loading user data...</p>
     </div>
   </mat-card>
+  <app-player></app-player>
 </div>
-<app-player></app-player>

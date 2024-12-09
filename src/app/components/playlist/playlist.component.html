@@ -1,0 +1,67 @@
+<div class="playlist-container">
+  @if (playlist) {
+  <div class="playlist-header">
+    @if (playlist.images.length > 0) {
+    <img
+      [src]="playlist.images[0].url"
+      alt="{{ playlist.name }}"
+      class="playlist-cover"
+    />
+    }
+    <div class="playlist-info">
+      <h1>{{ playlist.name }}</h1>
+      <p>Owner: {{ playlist.owner.display_name || playlist.owner.name }}</p>
+      <p>Total tracks: {{ totalTracks }}</p>
+      <p>Followers: {{ playlist.followers.total }}</p>
+      <button class="button" (click)="playPlaylist(playlist.uri)">
+        Play playlist
+      </button>
+    </div>
+  </div>
+  } @else {
+  <p>Loading playlist info...</p>
+  }
+
+  <div class="tracks-table">
+    <div class="tracks-header">
+      <div class="track-number">#</div>
+      <div class="track-title">Title</div>
+      <div class="track-duration">Duration</div>
+    </div>
+
+    @for (item of tracks; track item.track.id) {
+    <div class="track-row" (click)="onTrackClick(item)">
+      <div class="track-number">
+        {{ (currentPage - 1) * limit + $index + 1 }}
+      </div>
+      <div class="track-title">
+        <p class="track-name">{{ item.track.name }}</p>
+      </div>
+      <div class="track-duration">
+        {{ item.track.duration_ms | date : "m:ss" }}
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="pagination-controls">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">
+      Previous
+    </button>
+    <span>Page {{ currentPage }} of {{ Math.ceil(totalTracks / limit) }}</span>
+    <button
+      (click)="nextPage()"
+      [disabled]="currentPage * limit >= totalTracks"
+    >
+      Next
+    </button>
+  </div>
+
+  <div class="button-container">
+    <button (click)="redirectToHome()">Back to Home</button>
+  </div>
+
+  <div>
+    <app-player></app-player>
+  </div>
+</div>

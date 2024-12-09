@@ -1,0 +1,7 @@
+<div class="chart-container">
+  <canvas id="spotifyChart"></canvas>
+  <button class="load-button" (click)="getUserTopTracks()">
+    Load Top Tracks
+  </button>
+  <div *ngIf="error" class="error">{{ error() }}</div>
+</div>

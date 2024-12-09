@@ -7,10 +7,6 @@ import { PlayerComponent } from '../player/player.component';
 import { DeviceSelectionComponent } from '../device-selection/device-selection.component';
 import { SpotifyPlayerService } from '../../services/spotify.player.service';
 import {
-  FeaturedPlaylistsRepsonse,
-  FeaturedPlaylistItem,
-} from '../../interfaces/featured.playlists.interface';
-import {
   RecentlyPlayedTracks,
   RecentlyPlayedTracksResponse,
   Track,
@@ -20,6 +16,14 @@ import {
   UserTopArtistsResponse,
 } from '../../interfaces/user.top.artists.interface';
 import { catchError, of } from 'rxjs';
+import {
+  CurrentUserPlaylists,
+  CurrentUserPlaylistsResponse,
+} from '../../interfaces/current.user.playlists.interface';
+import { SpotifyUserService } from '../../services/spotify.user.service';
+import { SearchComponent } from '../search/search.component';
+import { ChartComponent } from '../chart/chart.component';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 
 @Component({
   selector: 'app-home',
@@ -29,12 +33,14 @@ import { catchError, of } from 'rxjs';
     LoginComponent,
     PlayerComponent,
     DeviceSelectionComponent,
+    SearchComponent,
+    ChartComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
-  playlists: FeaturedPlaylistItem[] = [];
+  playlists: CurrentUserPlaylists[] = [];
   recentlyPlayed: RecentlyPlayedTracks[] = [];
   topArtists: UserTopArtists[] = [];
   private _message: string = '';
@@ -42,12 +48,14 @@ export class HomeComponent implements OnInit {
   constructor(
     public router: Router,
     private _spotifyApiService: SpotifyApiService,
-    private _spotifyPlayerService: SpotifyPlayerService
+    private _spotifyPlayerService: SpotifyPlayerService,
+    private _spotifyUserService: SpotifyUserService,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
   ) {}
 
   ngOnInit(): void {
     this.getUserRecentTracks();
-    this.getTopPlaylists();
+    this.getPlaylists();
     this.getUserTopArtists();
   }
 
@@ -55,36 +63,40 @@ export class HomeComponent implements OnInit {
     this._spotifyPlayerService
       .playTrack(track.uri)
       .pipe(
-        catchError((error) => {
-          console.error(`Error playing track: ${track.name}`, error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            `Error playing track: ${track.name}`,
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe(() => {
-        console.log(`Playing track: ${track.name}`);
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            `Playing track: ${track.name}`,
+            3000
+          );
       });
   }
 
-  onPlaylistClick(playlist: FeaturedPlaylistItem): void {
-    this._spotifyPlayerService
-      .playPlaylist(playlist.uri)
-      .pipe(
-        catchError((error) => {
-          console.error(`Error playing playlist: ${playlist.name}`, error);
-          return of(null);
-        })
-      )
-      .subscribe(() => {
-        console.log(`Playing playlist: ${playlist.name}`);
-      });
+  onArtistClick(artistId: string): void {
+    this.router.navigate(['/artist', artistId]);
+  }
+
+  onPlaylistClick(playlistId: string): void {
+    this.router.navigate(['/playlist', playlistId]);
   }
 
   private getUserTopArtists(): void {
     this._spotifyApiService
       .getTopArtists()
       .pipe(
-        catchError((error) => {
-          console.error('Error obtaining users top artists!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error obtaining users top artists!',
+            5000
+          );
           return of({
             href: '',
             limit: 0,
@@ -101,29 +113,20 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  private getTopPlaylists(): void {
-    this._spotifyApiService
-      .getFeaturedPlaylists()
+  private getPlaylists(): void {
+    this._spotifyUserService
+      .getUserPlaylists()
       .pipe(
-        catchError((error) => {
-          console.error('Error obtaining featured playlists!', error);
-          return of({
-            message: '',
-            playlists: {
-              href: '',
-              limit: 0,
-              next: '',
-              offset: 0,
-              previous: '',
-              total: 0,
-              items: [],
-            },
-          } as FeaturedPlaylistsRepsonse);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching user playlists:',
+            5000
+          );
+          return of({ items: [] });
         })
       )
-      .subscribe((response: FeaturedPlaylistsRepsonse) => {
-        this._message = response.message;
-        this.playlists = response.playlists.items;
+      .subscribe((response: CurrentUserPlaylistsResponse) => {
+        this.playlists = response.items;
       });
   }
 
@@ -131,8 +134,11 @@ export class HomeComponent implements OnInit {
     this._spotifyApiService
       .getRecentlyPlayed()
       .pipe(
-        catchError((error) => {
-          console.error('Error obtaining users recently played tracks!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error obtaining users recently played tracks!',
+            5000
+          );
           return of({
             href: '',
             limit: 0,

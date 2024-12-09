@@ -2,7 +2,10 @@
   position: fixed;
   bottom: 0;
   left: 0;
+  right: 0;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   background-color: #282828;
   color: white;
   display: flex;
@@ -10,6 +13,7 @@
   justify-content: space-between;
   padding: 10px 20px;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
 }
 
 .track-info {
@@ -23,6 +27,14 @@
   margin-right: 10px;
   border-radius: 4px;
 }
+.track-info img.clickable {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.track-info img.clickable:hover {
+  transform: scale(1.1);
+}
 
 .controls button {
   background: none;
@@ -34,9 +46,33 @@
 }
 
 .controls button:hover {
-  color: #1db954; /* Spotify green */
+  color: #1db954;
 }
 
 .volume input {
   width: 100px;
+}
+
+.track-details-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
 }

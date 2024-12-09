@@ -11,6 +11,7 @@ import {
   CurrentUserPlaylists,
   CurrentUserPlaylistsResponse,
 } from '../../interfaces/current.user.playlists.interface';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 
 @Component({
   selector: 'app-user',
@@ -26,7 +27,8 @@ export class UserComponent implements OnInit {
   constructor(
     public router: Router,
     private _spotifyUserService: SpotifyUserService,
-    private _spotifyPlayerService: SpotifyPlayerService
+    private _spotifyPlayerService: SpotifyPlayerService,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -38,22 +40,35 @@ export class UserComponent implements OnInit {
     this._spotifyPlayerService
       .playPlaylist(playlistUri)
       .pipe(
-        catchError((error) => {
-          console.error('Error starting playlist playback:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error starting playlist playback:',
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe({
-        next: () => console.log(`Playing playlist: ${playlistUri}`),
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            `Playing playlist: ${playlistUri}`,
+            1000
+          );
       });
   }
 
+  onPlaylistClick(playlistId: string): void {
+    this.router.navigate(['/playlist', playlistId]);
+  }
   private getData(): void {
     this._spotifyUserService
       .getUserProfile()
       .pipe(
-        catchError((error) => {
-          console.error('Error obtaining user data!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error obtaining user data!',
+            5000
+          );
           return of(null);
         })
       )
@@ -61,7 +76,10 @@ export class UserComponent implements OnInit {
         if (profile) {
           this.userProfile = profile;
         } else {
-          console.error('No user profile data received.');
+          this._spotifyErrorHandlerService.showError(
+            'No user profile data received.',
+            5000
+          );
         }
       });
   }
@@ -70,8 +88,11 @@ export class UserComponent implements OnInit {
     this._spotifyUserService
       .getUserPlaylists()
       .pipe(
-        catchError((error) => {
-          console.error('Error fetching user playlists:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching user playlists:',
+            5000
+          );
           return of({ items: [] });
         })
       )

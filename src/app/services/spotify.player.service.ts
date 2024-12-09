@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { SelectDeviceResponse } from '../interfaces/device.selection.interface';
 import { CurrentlyPlayingResponse } from '../interfaces/current.track.interface';
 
@@ -8,23 +8,27 @@ import { CurrentlyPlayingResponse } from '../interfaces/current.track.interface'
   providedIn: 'root',
 })
 export class SpotifyPlayerService {
-  private _baseUrl = 'https://api.spotify.com/v1/me';
+  private readonly _baseUrl = 'https://api.spotify.com/v1/me';
   constructor(private _http: HttpClient) {}
 
-  nextTrack(): Observable<void> {
-    return this._http.post<void>(
-      `${this._baseUrl}/player/next`,
-      {},
-      { responseType: 'text' as 'json' }
-    );
+  nextTrack(): Observable<boolean> {
+    return this._http
+      .post<void>(
+        `${this._baseUrl}/player/next`,
+        {},
+        { responseType: 'text' as 'json' }
+      )
+      .pipe(map(() => true));
   }
 
-  previousTrack(): Observable<void> {
-    return this._http.post<void>(
-      `${this._baseUrl}/player/previous`,
-      {},
-      { responseType: 'text' as 'json' }
-    );
+  previousTrack(): Observable<boolean> {
+    return this._http
+      .post<void>(
+        `${this._baseUrl}/player/previous`,
+        {},
+        { responseType: 'text' as 'json' }
+      )
+      .pipe(map(() => true));
   }
 
   play(): Observable<void> {
@@ -58,15 +62,13 @@ export class SpotifyPlayerService {
     );
   }
 
-  playTrack(uri: string): Observable<void> {
-    return this._http.put<void>(
-      `${this._baseUrl}/player/play`,
-      { uris: [uri] },
-      {}
-    );
+  playTrack(uri: string): Observable<boolean> {
+    return this._http
+      .put<void>(`${this._baseUrl}/player/play`, { uris: [uri] }, {})
+      .pipe(map(() => true));
   }
 
-  playPlaylist(playlistUri: string, deviceId?: string): Observable<void> {
+  playPlaylist(playlistUri: string, deviceId?: string): Observable<boolean> {
     const body: { context_uri: string; device_id?: string } = {
       context_uri: playlistUri,
     };
@@ -75,7 +77,9 @@ export class SpotifyPlayerService {
       body.device_id = deviceId;
     }
 
-    return this._http.put<void>(`${this._baseUrl}/player/play`, body, {});
+    return this._http
+      .put<void>(`${this._baseUrl}/player/play`, body, {})
+      .pipe(map(() => true));
   }
 
   getAvailableDevices(): Observable<SelectDeviceResponse> {

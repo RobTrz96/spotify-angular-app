@@ -1,0 +1,82 @@
+.artist-info-container {
+  margin: 30px auto;
+  max-width: 1200px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #333;
+  padding-bottom: 100px;
+  img {
+    border-radius: 5px;
+    width: 640px;
+    height: 640px;
+  }
+}
+
+.top-tracks-container,
+.albums-container {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #1db954;
+  }
+}
+
+.top-tracks-grid,
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  justify-content: center;
+}
+
+.top-track-item,
+.album-item {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .track-title,
+  .album-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 10px 0 5px 0;
+    color: #000;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 90%;
+    display: inline-block;
+  }
+
+  .track-artist,
+  .album-release,
+  .track-album {
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 90%;
+    display: inline-block;
+  }
+}

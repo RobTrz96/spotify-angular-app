@@ -6,11 +6,13 @@ import {
   CurrentlyPlayingResponse,
   Track,
 } from '../../interfaces/current.track.interface';
+import { TrackComponent } from '../track/track.component';
+import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TrackComponent],
   templateUrl: './player.component.html',
   styleUrl: './player.component.scss',
 })
@@ -18,9 +20,13 @@ export class PlayerComponent implements OnInit {
   currentTrack: Track | null = null;
   isPlaying: boolean = false;
   volume: number = 50;
+  showTrackDetails = false;
   private _playbackSubscription: Subscription | undefined;
 
-  constructor(private _spotifyPlayerService: SpotifyPlayerService) {}
+  constructor(
+    private _spotifyPlayerService: SpotifyPlayerService,
+    private _spotifyErrorHandlerService: SpotifyErrorHandlerService
+  ) {}
 
   ngOnInit(): void {
     this.loadCurrentTrack();
@@ -32,22 +38,40 @@ export class PlayerComponent implements OnInit {
       this._spotifyPlayerService
         .pause()
         .pipe(
-          catchError((error) => {
-            console.error('Error pausing playback:', error);
+          catchError(() => {
+            this._spotifyErrorHandlerService.showError(
+              'Error pausing playback:',
+              5000
+            );
             return of(null);
           })
         )
-        .subscribe(() => (this.isPlaying = false));
+        .subscribe(() => {
+          this._spotifyErrorHandlerService.showSuccess(
+            'Stopped succesfully',
+            500
+          );
+          this.isPlaying = false;
+        });
     } else {
       this._spotifyPlayerService
         .play()
         .pipe(
-          catchError((error) => {
-            console.error('Error resuming playback:', error);
+          catchError(() => {
+            this._spotifyErrorHandlerService.showError(
+              'Error resuming playback:',
+              5000
+            );
             return of(null);
           })
         )
-        .subscribe(() => (this.isPlaying = true));
+        .subscribe(() => {
+          this._spotifyErrorHandlerService.showSuccess(
+            'Played successfully',
+            500
+          );
+          this.isPlaying = true;
+        });
     }
   }
 
@@ -55,13 +79,20 @@ export class PlayerComponent implements OnInit {
     this._spotifyPlayerService
       .nextTrack()
       .pipe(
-        catchError((error) => {
-          console.error('Error skipping to next track:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error skipping to next track:',
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe(() => {
-        console.log('Succesfully skipped to next track.');
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            'Succesfully skipped to next track.',
+            500
+          );
       });
   }
 
@@ -69,13 +100,20 @@ export class PlayerComponent implements OnInit {
     this._spotifyPlayerService
       .previousTrack()
       .pipe(
-        catchError((error) => {
-          console.error('Error skipping to previous track:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error skipping to previous track:',
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe(() => {
-        console.log('Succesfully skipped to previous track.');
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            'Succesfully skipped to previous track.',
+            500
+          );
       });
   }
 
@@ -86,8 +124,11 @@ export class PlayerComponent implements OnInit {
     this._spotifyPlayerService
       .setVolume(volume)
       .pipe(
-        catchError((error) => {
-          console.error('Error adjusting volume:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error adjusting volume:',
+            5000
+          );
           return of(null);
         })
       )
@@ -98,22 +139,40 @@ export class PlayerComponent implements OnInit {
     this._spotifyPlayerService
       .playPlaylist(playlistUri)
       .pipe(
-        catchError((error) => {
-          console.error('Failed to start playback:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Failed to start playback:',
+            5000
+          );
           return of(null);
         })
       )
-      .subscribe(() => {
-        console.log(`Playing playlist: ${playlistUri}`);
+      .subscribe((result) => {
+        if (result)
+          this._spotifyErrorHandlerService.showSuccess(
+            `Playing playlist: ${playlistUri}`,
+            1000
+          );
       });
+  }
+
+  viewTrackDetails(): void {
+    this.showTrackDetails = true;
+  }
+
+  closeTrackDetails(): void {
+    this.showTrackDetails = false;
   }
 
   private updatePlaybackState(): void {
     this._spotifyPlayerService
       .getCurrentTrack()
       .pipe(
-        catchError((err) => {
-          console.error('Error fetching playback state:', err);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error fetching playback state:',
+            5000
+          );
           return of({ item: null });
         })
       )
@@ -126,8 +185,11 @@ export class PlayerComponent implements OnInit {
     this._spotifyPlayerService
       .getCurrentTrack()
       .pipe(
-        catchError((error) => {
-          console.error('Error fetching the current track!', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error getting the current track!',
+            5000
+          );
           return of({
             item: null,
             is_playing: false,
@@ -143,8 +205,11 @@ export class PlayerComponent implements OnInit {
   private startPollingPlaybackState(): void {
     this._playbackSubscription = interval(1000)
       .pipe(
-        catchError((error) => {
-          console.error('Error polling playback state:', error);
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error polling playback state:',
+            5000
+          );
           return of(null);
         })
       )
