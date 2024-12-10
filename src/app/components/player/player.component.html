@@ -30,6 +30,18 @@
       (input)="adjustVolume($event)"
     />
   </div>
+
+  <div class="seek-bar">
+    <input
+      type="range"
+      min="0"
+      [max]="currentTrack?.duration_ms || 0"
+      [value]="progressMs"
+      (input)="seekTo($event)"
+    />
+    <span>{{ progressMs | duration }}</span> /
+    <span>{{ currentTrack!.duration_ms | duration }}</span>
+  </div>
 </div>
 
 <div class="track-details-modal" *ngIf="showTrackDetails">
