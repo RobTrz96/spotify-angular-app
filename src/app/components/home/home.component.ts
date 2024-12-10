@@ -36,6 +36,7 @@ import { QueueComponent } from '../queue/queue.component';
     DeviceSelectionComponent,
     SearchComponent,
     ChartComponent,
+    QueueComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -45,7 +46,6 @@ export class HomeComponent implements OnInit {
   recentlyPlayed: RecentlyPlayedTracks[] = [];
   topArtists: UserTopArtists[] = [];
   private _message: string = '';
-
   constructor(
     public router: Router,
     private _spotifyApiService: SpotifyApiService,

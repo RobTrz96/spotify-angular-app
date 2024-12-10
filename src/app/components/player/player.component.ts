@@ -8,12 +8,11 @@ import {
 } from '../../interfaces/current.track.interface';
 import { TrackComponent } from '../track/track.component';
 import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
-import { QueueComponent } from '../queue/queue.component';
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CommonModule, TrackComponent, QueueComponent],
+  imports: [CommonModule, TrackComponent],
   templateUrl: './player.component.html',
   styleUrl: './player.component.scss',
 })
@@ -23,7 +22,6 @@ export class PlayerComponent implements OnInit {
   volume: number = 50;
   showTrackDetails = false;
   private _playbackSubscription: Subscription | undefined;
-  showQueue = false;
   constructor(
     private _spotifyPlayerService: SpotifyPlayerService,
     private _spotifyErrorHandlerService: SpotifyErrorHandlerService
@@ -164,10 +162,7 @@ export class PlayerComponent implements OnInit {
   closeTrackDetails(): void {
     this.showTrackDetails = false;
   }
-  toggleQueue(): void {
-    this.showQueue = !this.showQueue;
-    console.log('Queue state toggled:', this.showQueue);
-  }
+
   private updatePlaybackState(): void {
     this._spotifyPlayerService
       .getCurrentTrack()
@@ -207,7 +202,7 @@ export class PlayerComponent implements OnInit {
   }
 
   private startPollingPlaybackState(): void {
-    this._playbackSubscription = interval(1000)
+    this._playbackSubscription = interval(10900)
       .pipe(
         catchError(() => {
           this._spotifyErrorHandlerService.showError(

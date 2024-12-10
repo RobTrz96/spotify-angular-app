@@ -23,6 +23,7 @@ export class QueueComponent implements OnInit {
   currentPage: number = 1;
   limit: number = 8;
   totalTracks: number = 0;
+  isShuffleEnabled: boolean = false;
 
   constructor(
     private _spotifyApiService: SpotifyApiService,
@@ -33,8 +34,9 @@ export class QueueComponent implements OnInit {
     setInterval(() => {
       if (this.showQueue) {
         this.getQueue();
+        this.getShuffleState();
       }
-    }, 1000);
+    }, 10000);
   }
 
   nextPage(): void {
@@ -80,6 +82,57 @@ export class QueueComponent implements OnInit {
           this.totalTracks = this.queue.length;
         }
       });
+  }
+
+  getShuffleState(): void {
+    this._spotifyApiService
+      .getShuffleState()
+      .pipe(
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error getting shuffle state:',
+            5000
+          );
+          this.isShuffleEnabled = false;
+          return of(false);
+        })
+      )
+      .subscribe((state) => {
+        this.isShuffleEnabled = state;
+      });
+  }
+
+  enableShuffle(): void {
+    this._spotifyApiService
+      .shuffleQueue(true)
+      .pipe(
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error shuffling queue',
+            5000
+          );
+          return of(null);
+        })
+      )
+      .subscribe(() =>
+        this._spotifyErrorHandlerService.showSuccess('Shuffle enabled', 1000)
+      );
+  }
+  disableShuffle(): void {
+    this._spotifyApiService
+      .shuffleQueue(false)
+      .pipe(
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error disabling shuffling queue',
+            5000
+          );
+          return of(null);
+        })
+      )
+      .subscribe(() =>
+        this._spotifyErrorHandlerService.showSuccess('Shuffle disabled', 1000)
+      );
   }
   viewQueue(): void {
     this.getQueue();

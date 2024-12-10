@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { RecentlyPlayedTracksResponse } from '../interfaces/recently.played.tracks.interface';
 import { UserTopArtistsResponse } from '../interfaces/user.top.artists.interface';
 import { UserTopTracksResponse } from '../interfaces/user.top.tracks.interface';
@@ -34,5 +34,17 @@ export class SpotifyApiService {
 
   getQueue(): Observable<QueueResponse> {
     return this._http.get<QueueResponse>(`${this._baseUri}/me/player/queue`);
+  }
+  getShuffleState(): Observable<boolean> {
+    return this._http
+      .get<any>(`${this._baseUri}/me/player`)
+      .pipe(map((response) => response.shuffle_state));
+  }
+  shuffleQueue(state: boolean): Observable<void> {
+    return this._http.put<void>(
+      `${this._baseUri}/me/player/shuffle?state=${state}`,
+      {},
+      { responseType: 'text' as 'json' }
+    );
   }
 }
