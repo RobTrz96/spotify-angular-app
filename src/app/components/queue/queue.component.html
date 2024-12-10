@@ -30,7 +30,13 @@
             @if (isShuffleEnabled) {
             <button (click)="disableShuffle()">Disable Shuffle</button>
             } @else {
-            <button (click)="enableShuffle()">Enable Shuffle</button>
+            <button (click)="enableShuffle()">Enable Shuffle</button>} @if
+            (isRepeatEnabled === 'off') {
+            <button (click)="toggleRepeat()">Repeat all</button>
+            } @else if (isRepeatEnabled === 'context'){
+            <button (click)="toggleRepeat()">Repeat one</button>
+            } @else {
+            <button (click)="toggleRepeat()">Disable repeat</button>
             }
           </div>
         </div>

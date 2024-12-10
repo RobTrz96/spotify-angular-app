@@ -24,6 +24,7 @@ export class QueueComponent implements OnInit {
   limit: number = 8;
   totalTracks: number = 0;
   isShuffleEnabled: boolean = false;
+  isRepeatEnabled: string = '';
 
   constructor(
     private _spotifyApiService: SpotifyApiService,
@@ -35,6 +36,7 @@ export class QueueComponent implements OnInit {
       if (this.showQueue) {
         this.getQueue();
         this.getShuffleState();
+        this.getRepeatState();
       }
     }, 10000);
   }
@@ -58,7 +60,82 @@ export class QueueComponent implements OnInit {
     const endIndex = startIndex + this.limit;
     return this.queue.slice(startIndex, endIndex);
   }
-  getQueue(): void {
+
+  enableShuffle(): void {
+    this._spotifyApiService
+      .shuffleQueue(true)
+      .pipe(
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error shuffling queue',
+            5000
+          );
+          return of(null);
+        })
+      )
+      .subscribe(() =>
+        this._spotifyErrorHandlerService.showSuccess('Shuffle enabled', 1000)
+      );
+  }
+
+  disableShuffle(): void {
+    this._spotifyApiService
+      .shuffleQueue(false)
+      .pipe(
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error disabling shuffling queue',
+            5000
+          );
+          return of(null);
+        })
+      )
+      .subscribe(() =>
+        this._spotifyErrorHandlerService.showSuccess('Shuffle disabled', 1000)
+      );
+  }
+
+  viewQueue(): void {
+    this.getQueue();
+    this.showQueue = true;
+  }
+
+  closeQueue(): void {
+    this.showQueue = false;
+  }
+
+  toggleRepeat(): void {
+    let nextState: 'off' | 'context' | 'track';
+    if (this.isRepeatEnabled === 'off') {
+      nextState = 'context';
+    } else if (this.isRepeatEnabled === 'context') {
+      nextState = 'track';
+    } else {
+      nextState = 'off';
+    }
+    this._spotifyApiService
+      .setRepeat(nextState)
+      .pipe(
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error setting repeat mode:',
+            5000
+          );
+          return of(null);
+        })
+      )
+      .subscribe((response) => {
+        if (response) {
+          this._spotifyErrorHandlerService.showSuccess(
+            `Repeat mode set to: ${nextState}`,
+            1000
+          );
+          this.isRepeatEnabled = nextState;
+        }
+      });
+  }
+
+  private getQueue(): void {
     const offset = (this.currentPage - 1) * this.limit;
     this.isRefreshing = true;
     this._spotifyApiService
@@ -84,7 +161,25 @@ export class QueueComponent implements OnInit {
       });
   }
 
-  getShuffleState(): void {
+  private getRepeatState(): void {
+    this._spotifyApiService
+      .getRepeatState()
+      .pipe(
+        catchError(() => {
+          this._spotifyErrorHandlerService.showError(
+            'Error getting repeat state:',
+            5000
+          );
+          this.isRepeatEnabled = 'off';
+          return of('off');
+        })
+      )
+      .subscribe((repeatState) => {
+        this.isRepeatEnabled = repeatState;
+      });
+  }
+
+  private getShuffleState(): void {
     this._spotifyApiService
       .getShuffleState()
       .pipe(
@@ -100,45 +195,5 @@ export class QueueComponent implements OnInit {
       .subscribe((state) => {
         this.isShuffleEnabled = state;
       });
-  }
-
-  enableShuffle(): void {
-    this._spotifyApiService
-      .shuffleQueue(true)
-      .pipe(
-        catchError(() => {
-          this._spotifyErrorHandlerService.showError(
-            'Error shuffling queue',
-            5000
-          );
-          return of(null);
-        })
-      )
-      .subscribe(() =>
-        this._spotifyErrorHandlerService.showSuccess('Shuffle enabled', 1000)
-      );
-  }
-  disableShuffle(): void {
-    this._spotifyApiService
-      .shuffleQueue(false)
-      .pipe(
-        catchError(() => {
-          this._spotifyErrorHandlerService.showError(
-            'Error disabling shuffling queue',
-            5000
-          );
-          return of(null);
-        })
-      )
-      .subscribe(() =>
-        this._spotifyErrorHandlerService.showSuccess('Shuffle disabled', 1000)
-      );
-  }
-  viewQueue(): void {
-    this.getQueue();
-    this.showQueue = true;
-  }
-  closeQueue(): void {
-    this.showQueue = false;
   }
 }
