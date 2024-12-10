@@ -93,4 +93,11 @@ export class SpotifyPlayerService {
     const body = { device_ids: [deviceId], play: true };
     return this._http.put('https://api.spotify.com/v1/me/player', body, {});
   }
+
+  seekToPosition(positionMs: number): Observable<void> {
+    return this._http.put<void>(
+      `${this._baseUrl}/player/seek?position_ms=${positionMs}`,
+      {}
+    );
+  }
 }

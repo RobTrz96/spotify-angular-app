@@ -24,6 +24,7 @@ import { SpotifyUserService } from '../../services/spotify.user.service';
 import { SearchComponent } from '../search/search.component';
 import { ChartComponent } from '../chart/chart.component';
 import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler.service';
+import { QueueComponent } from '../queue/queue.component';
 
 @Component({
   selector: 'app-home',
@@ -35,6 +36,7 @@ import { SpotifyErrorHandlerService } from '../../services/spotify.error.handler
     DeviceSelectionComponent,
     SearchComponent,
     ChartComponent,
+    QueueComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -44,7 +46,6 @@ export class HomeComponent implements OnInit {
   recentlyPlayed: RecentlyPlayedTracks[] = [];
   topArtists: UserTopArtists[] = [];
   private _message: string = '';
-
   constructor(
     public router: Router,
     private _spotifyApiService: SpotifyApiService,

@@ -67,7 +67,7 @@ export class DeviceSelectionComponent implements OnInit {
   }
 
   private startAutoRefresh(): void {
-    this._refreshInterval = interval(1500).subscribe(() => {
+    this._refreshInterval = interval(10000).subscribe(() => {
       this.loadDevices();
     });
   }

@@ -1,1 +1,97 @@
-<p>queue works!</p>
+<div class="button-container">
+  <button (click)="viewQueue()">Show Queue</button>
+</div>
+@if (showQueue) {
+<div class="queue-modal">
+  <div class="modal-content">
+    <button class="close-button" (click)="closeQueue()">×</button>
+    <div class="queue-container">
+      <div class="queue-header">
+        @if (currentlyPlaying) {
+        <img
+          [src]="currentlyPlaying.album.images[0].url"
+          alt="Album Cover"
+          class="queue-cover"
+        />
+        <div class="queue-info">
+          <h1>{{ currentlyPlaying.name || "Currently Playing" }}</h1>
+          <p>
+            By: @for (artist of currentlyPlaying.artists; track artist.name; let
+            last = $last) {
+            <span>
+              {{ artist.name }}
+              @if (!$last) {
+              <span>, </span>
+              }
+            </span>
+            }
+          </p>
+          <div class="button-container">
+            @if (isShuffleEnabled) {
+            <button (click)="disableShuffle()">Disable Shuffle</button>
+            } @else {
+            <button (click)="enableShuffle()">Enable Shuffle</button>} @if
+            (isRepeatEnabled === 'off') {
+            <button (click)="toggleRepeat()">Repeat all</button>
+            } @else if (isRepeatEnabled === 'context'){
+            <button (click)="toggleRepeat()">Repeat one</button>
+            } @else {
+            <button (click)="toggleRepeat()">Disable repeat</button>
+            }
+          </div>
+        </div>
+        }
+      </div>
+      <div class="tracks-table" *ngIf="queue.length > 0; else noQueue">
+        <div class="tracks-header">
+          <div class="header-number">#</div>
+          <div class="header-title">Title</div>
+          <div class="header-duration">Duration</div>
+        </div>
+        <div
+          *ngFor="let track of paginatedQueue; let i = index"
+          class="track-row"
+        >
+          <div class="track-number">
+            {{ (currentPage - 1) * limit + i + 1 }}
+          </div>
+          <div class="track-title">
+            <div class="track-name">{{ track.name }}</div>
+            <div class="track-artist">
+              @for (artist of track.artists; track artist; let last = $last) {
+              <span>
+                {{ artist.name }}
+                @if (!$last) {
+                <span>, </span> }
+              </span>
+              }
+            </div>
+          </div>
+          <div class="track-duration">{{ track.duration_ms | duration }}</div>
+        </div>
+
+        <div class="pagination-controls">
+          <button (click)="previousPage()" [disabled]="currentPage === 1">
+            Previous
+          </button>
+          <span
+            >Page {{ currentPage }} of
+            {{ Math.ceil(totalTracks / limit) }}</span
+          >
+          <button
+            (click)="nextPage()"
+            [disabled]="currentPage * limit >= totalTracks"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+      <app-player></app-player>
+    </div>
+    <ng-template #noQueue>
+      <p>No tracks in the queue.</p>
+    </ng-template>
+  </div>
+</div>
+}
